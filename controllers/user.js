@@ -13,7 +13,7 @@ const login = async (req, res, next) => {
 
   if(!validateEmail(email)) return res.status(400).send("Please enter valid email ID");
 
-  const user = await User.findOne({_id : req.user._id});
+  const user = await User.findOne({_id : req.user.user_id});
 
   if (!user) return res.status(401).send("Invalid Email of Password");
 

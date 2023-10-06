@@ -1,27 +1,57 @@
 
-const express= require("express");
-const { Answer } =  require("../models/Answer.js");
+
+const Answer =  require("../models/Answer.js");
+const Question = require("../models/Question.js");
 
 
 
 const newAnswer = async (req , res)=>{
     try{
     const {answer} = req.body;
-
-    await Answer.create({
+    const questionId = req.params.questionId;
+    const createdAnswer = new Answer({
         user : req.user._id,
         answer,
-        question : req.params.questionId,
-        createdAt : Date.now(),
+        question : questionId
     })
+
+
+    await createdAnswer.save();
+
+    await Question.findByIdAndUpdate(
+        questionId,
+        {
+             $push: { answers: createdAnswer._id }
+        },
+        (err)=>{
+            if(err) return res.status(400).send("Question could not be updated properly")
+        }
+    )
+
+
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $push : { answers : createdAnswer._id}
+        },
+        (err)=>{
+            if(err) return res.status(400).send("User could not be updated successfully")
+        }
+    )
+
+    
 
     res.status(201).json({
         success : true,
-        message : "Answer posted successfully",
+        message : "Answer posted successfully ,Question document updated successfully and User updated Successfully",
+        createdAnswer
+
     })
 }
 catch(e){
-    console.error(e);
+    res.json({
+        "Error" : e.message
+    });
 }
 
 } 
@@ -37,7 +67,9 @@ const getAnswer = async (req , res )=>{
     })
 }
 catch(e){
-    console.error(e);
+    res.json({
+        "Error" : e.message
+    });
 }
 
 } 
@@ -70,17 +102,40 @@ const deleteAnswer = async (req , res )=>{
 
 
     if(!deletedAnswer) return res.status(404).send("Invalid ID , answer does not exist");
+
+
+    await Question.findByIdAndUpdate(
+        deletedAnswer.question,
+        {
+            $pull : { answers : deletedAnswer._id}
+        },
+        (err)=>{
+            if(err) return res.status(400).send("Question couldn't be updated properly")
+        }
+    )
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $pull : { answers : deletedAnswer._id}
+        },
+        (err)=>{
+            if(err) return res.status(400).send("User could not be updated successfully")
+        }
+    )
+
     
 
      res.status(201).send({
         success : true,
-        message : "Answer Removed Successfully",
+        message : "Answer Removed Successfully ,Question Updated Successfully and User updated Successfully",
         deletedQuestion
 } )
 
 }
 catch(e){
-    console.error(e);
+    res.json({
+        "Error" : e.message
+    });
 }
 }
 

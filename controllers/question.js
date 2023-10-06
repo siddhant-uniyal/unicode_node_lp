@@ -1,31 +1,40 @@
 
-const express= require("express");
-const { Question } =  require("../models/Question.js");
+
+const Question =  require("../models/Question.js");
 
 
 
-const newQuestion = async (req , res)=>{
+const postQuestion = async (req , res)=>{
     try{
     const {question , category} = req.body;
 
-    const newQuestion = new Question({
+    const postedQuestion = new Question({
         question :question,
         category : category,
-        createdAt : Date.now(),
-
     })
 
-    await newQuestion.save();
+    await postedQuestion.save();
 
-    res.json(newQuestion);
+
+    
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $push : { questions : postedQuestion._id}
+        },
+        (err)=>{
+            if(err) return res.status(400).send("User could not be updated successfully")
+        }
+    )
 
     res.status(201).json({
         success : true,
         message : "Question posted successfully",
+        newQuestion
     })
 }
 catch(e){
-    console.error(e);
+    res.json({"Error" : e.message});
 }
 
 } 
@@ -41,7 +50,9 @@ const getQuestion = async (req , res )=>{
     })
 }
 catch(e){
-    console.error(e);
+    res.json({
+        "Error" : e.message
+    });
 }
 
 } 
@@ -89,7 +100,7 @@ catch(e){
 }
 
 
-module.exports.newQuestion = newQuestion;
+module.exports.postQuestion = postQuestion;
 module.exports.getQuestion = getQuestion;
 module.exports.updateQuestion = updateQuestion;
 module.exports.deleteQuestion = deleteQuestion;

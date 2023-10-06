@@ -17,33 +17,37 @@ const schema = new mongoose.Schema({
     },
 
     followers : {
-        type : [String],
+        type : [mongoose.Schema.Types.ObjectId],
+        ref : 'User'  //since , users will follow other users
     },
 
     following : {
-        type : [String],
+        type : [mongoose.Schema.Types.ObjectId],
+        ref : 'User'
+
     },
 
     answers : {
-        type : [String],
+        type : [mongoose.Schema.Types.ObjectId],
+        ref : 'Answer'  //this field has all the answers that are associated with this user. everytime an answer is created , i will PATCH this
+        //field to contain the answer document id
     },
 
     questions : {
-        type : [String],
+        type : [mongoose.Schema.Types.ObjectId],
+        ref : 'Question' //same logic as above
     },
 
     views : {
-        type : [String],
+        type : [mongoose.Schema.Types.ObjectId],
+        ref : 'User'
     },
 
     education : {
         type : String,
-    },
-
-    joinedAt:{
-        type : Date,
-        default : Date.now,
-    },
+    }
+},{
+    timestamps : true
 })
 
 module.exports = mongoose.model("User" , schema)

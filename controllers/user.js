@@ -1,27 +1,28 @@
-const { User } = require("../models/User.js");
-const { sendCookie } =  require("../utils/features.js");
-const  bcrypt = require("bcrypt");
-
-
+const  User = require("../models/User.js");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const validateEmail =(inputText)=>{
+  const patternToMatch = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+  if(inputText.value.match(patternToMatch)) return true;
+  else return false;
+}
 
 const login = async (req, res, next) => {
 
-  const { name , email, password } = req.body;
+  const {email} = req.body;
 
-  const user = await User.findOne({ email }).select("+password");
+  if(!validateEmail(email)) return res.status(400).send("Please enter valid email ID");
 
-  if (!user) return res.send("Invalid Email of Password");
+  const user = await User.findOne({_id : req.user._id});
 
-  const isMatch = await bcrypt.compare(password, user.password);
+  if (!user) return res.status(401).send("Invalid Email of Password");
 
-  if (!isMatch) return res.send("Invalid Email of Password");
-
-  sendCookie(user, res, `Welcome back , ${user.name}`, 200);
+  res.send("Successful login attempt , welcome back");
 };
 
 const register = async (req, res) => {
   const { name, email, password } = req.body;
-
+  try{
   let user = await User.findOne({ email });
 
   if (user)
@@ -30,32 +31,45 @@ const register = async (req, res) => {
       message: "User already exists",
     });
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(password, process.env.SALT);
 
   user = await User.create({ name, email, password: hashedPassword });
 
-  sendCookie(user, res, "Registered Successfully", 201);
+  const authToken = jwt.sign({user_id : user._id},process.env.JWT_SECRET);
+
+  res.json({
+    success : true,
+    message : "Successful registration",
+    user,
+    authToken
+  })
+
+
+
+  }catch(e){
+    res.json({"Error" : e.message});
+  }
+
 };
 
-const getMyProfile = (req, res) => {
+const getMyProfile = async (req, res) => {
+
+  const user = await User.findOne({_id : req.user});
+
+  if(user){
   res.status(200).json({
     success: true,
-    user: req.user,
+    user,
   });
+  }
+
+  else{
+    res.status(404).send("User does not exist");
+  }
 };
 
 const logout = (req, res) => {
-  res
-    .status(200)
-    .cookie("token", "", {
-      expires: new Date(Date.now()),
-      sameSite: "lax",
-      secure: false,
-    })
-    .json({
-      success: true,
-      user: req.user,
-    });
+  res.send("hello");
 };
 
 

@@ -5,7 +5,7 @@ const questionRouter = require("./routes/question.js");
 const answerRouter =  require("./routes/answer.js");
 
 const {config} =  require("dotenv");
-const cookieParser =  require("cookie-parser");
+
 
 const app = express();
 
@@ -14,7 +14,6 @@ config({
 })
 
 
-app.use(cookieParser())
 app.use(express.json())
 app.use(userRouter)
 app.use(questionRouter)

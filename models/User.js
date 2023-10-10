@@ -38,6 +38,11 @@ const schema = new mongoose.Schema({
         ref : 'Question' //same logic as above
     },
 
+    comments : {
+        type : [mongoose.Schema.Types.ObjectId],
+        ref : 'Comment'
+    },
+
     views : {
         type : [mongoose.Schema.Types.ObjectId],
         ref : 'User'

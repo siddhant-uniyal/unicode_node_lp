@@ -19,7 +19,7 @@ const schema = new mongoose.Schema({
         required : true
     },
 
-    body : {
+    comment : {
         type : String, //actual content of comment
         required : true
     },

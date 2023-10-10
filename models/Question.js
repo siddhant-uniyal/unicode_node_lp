@@ -13,6 +13,7 @@ const schema = new mongoose.Schema({
     
     category : {
         type : [String],
+        enum : ['Science' , 'Philosophy' , 'Fashion' , 'Music' , 'Art' , 'Engineering' , 'Technology'], //add more
         required : true
     },
 

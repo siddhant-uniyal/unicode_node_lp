@@ -81,10 +81,24 @@ const updateQuestion = async (req , res)=>{
 }
 const deleteQuestion = async (req , res )=>{
     try{
-    const deletedQuestion = await Question.findByIdAndDelete(req.params.questionId);
-
+    const deletedQuestion = await Question.findById(req.params.questionId);
 
     if(!deletedQuestion) return res.status(404).send("Invalid ID , question does not exist");
+
+    if(deletedQuestion.answers.length >= 1)return res.status(400).send("Sorry , you can't delete a question once you have recieved an answer");
+
+    await deletedQuestion.remove();
+    
+
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $pull : { answers : deletedQuestion._id}
+        },
+        (err)=>{
+            if(err) return res.status(400).send("User could not be updated successfully")
+        }
+    )
     
 
      res.status(201).send({

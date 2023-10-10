@@ -1,5 +1,5 @@
 
-
+const User = require("../models/User.js")
 const Question =  require("../models/Question.js");
 
 
@@ -22,15 +22,15 @@ const postQuestion = async (req , res)=>{
         {
             $push : { questions : postedQuestion._id}
         },
-        (err)=>{
-            if(err) return res.status(400).send("User could not be updated successfully")
-        }
+        // (err)=>{
+        //     if(err) return res.status(400).send("User could not be updated successfully")
+        // }
     )
 
     res.status(201).json({
         success : true,
         message : "Question posted successfully",
-        newQuestion
+        postedQuestion
     })
 }
 catch(e){

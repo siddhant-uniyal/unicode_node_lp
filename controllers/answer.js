@@ -2,8 +2,7 @@
 
 const Answer =  require("../models/Answer.js");
 const Question = require("../models/Question.js");
-
-
+const User = require("../models/User.js")
 
 const newAnswer = async (req , res)=>{
     try{

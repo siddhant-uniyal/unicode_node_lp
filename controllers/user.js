@@ -1,6 +1,28 @@
 const User = require("../models/User.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+
+
+  
+  const transporter = nodemailer.createTransport({
+    service : "gmail",
+   
+    auth : {
+      user : process.env.EMAIL,
+      pass : process.env.PASSWORD
+    },
+    tls: {
+      rejectUnauthorized: false
+    }
+
+  })
+
+
+
+
+
+
 
 const login = async (req, res, next) => {
   const user = await User.findOne({ _id: req.user.user_id });
@@ -40,15 +62,35 @@ const register = async (req, res) => {
 
     const authToken = jwt.sign({ user_id: user._id }, process.env.JWT_SECRET);
 
+    const mailOptions = {
+      from : process.env.EMAIL,
+      to : req.body.email,
+      subject : "Successful Registration",
+      text : `Hi ${req.body.name}, you have successfully registered to our Quora Clone`
+    }
+
+    const info = await transporter.sendMail(mailOptions, function(err, data) {
+      if(err) {
+          console.log(err.message);
+      } else {
+          console.log(data);
+      }
+  });
+
     res.json({
       success: true,
-      message: "Successful registration",
+      message: "Successful registration and email sent",
       user,
       authToken,
+      info
     });
   } catch (e) {
     res.json({ Error: e.message });
   }
+
+
+
+
 };
 
 const getMyProfile = async (req, res) => {

@@ -7,7 +7,7 @@ const router = express.Router();
 
 
 router.post("/answer/:questionId" , isAuthenticated, newAnswer);
-router.get("/answer/myanswers"  , isAuthenticated, getAnswer);
+router.get("/answer/get"  , isAuthenticated, getAnswer);
 
 router.route("/answer/:answerId")
 .put( isAuthenticated, updateAnswer)

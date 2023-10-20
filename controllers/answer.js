@@ -9,7 +9,7 @@ const newAnswer = async (req , res)=>{
     const {answer} = req.body;
     const questionId = req.params.questionId;
     const createdAnswer = new Answer({
-        user : req.user._id,
+        user : req.user.user_id,
         answer,
         question : questionId
     })
@@ -17,26 +17,29 @@ const newAnswer = async (req , res)=>{
 
     await createdAnswer.save();
 
-    await Question.findByIdAndUpdate(
-        questionId,
-        {
-             $push: { answers: createdAnswer._id }
-        },
-        (err)=>{
-            if(err) return res.status(400).send("Question could not be updated properly")
-        }
-    )
+    try {
+        await Question.findByIdAndUpdate(
+          questionId,
+          {
+            $push: { answers: createdAnswer._id }
+          }
+        );
+      } catch(err) {
+        return res.status(400).send("Question could not be updated properly");
+      }
 
 
-    await User.findByIdAndUpdate(
-        req.user._id,
-        {
-            $push : { answers : createdAnswer._id}
-        },
-        (err)=>{
-            if(err) return res.status(400).send("User could not be updated successfully")
-        }
-    )
+      try {
+        await User.findByIdAndUpdate(
+          req.user.user_id,
+          {
+            $push: { answers: createdAnswer._id }
+          }
+        );
+      } catch(err) {
+        return res.status(400).send("User could not be updated properly");
+      }
+
 
     
 

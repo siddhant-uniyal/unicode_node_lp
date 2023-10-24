@@ -4,7 +4,7 @@ const Question =  require("../models/Question.js");
 
 
 
-export async function postQuestion(req , res){
+const postQuestion = async (req , res) => {
     try{
     const {question , category} = req.body;
 
@@ -38,7 +38,7 @@ catch(e){
 }
 
 } 
-export async function getQuestion(req , res ){
+const getQuestion = async (req , res )=>{
     
     try{
 
@@ -56,7 +56,7 @@ catch(e){
 }
 
 } 
-export async function updateQuestion(req , res){
+const updateQuestion = async (req , res) => {
     
     try{
     const updatedQuestion = await Question.findOneAndUpdate(
@@ -79,7 +79,7 @@ export async function updateQuestion(req , res){
     
 
 }
-export async function deleteQuestion(req , res ){
+const deleteQuestion = async(req , res )=>{
     try{
     const deletedQuestion = await Question.findById(req.params.questionId);
 
@@ -113,7 +113,7 @@ catch(e){
 }
 }
 
-export async function upvoteQuestion(req , res){
+const upvoteQuestion = async (req , res) => {
 
     try{
         await Question.findByIdAndUpdate(
@@ -138,7 +138,7 @@ export async function upvoteQuestion(req , res){
 
 
 
-export async function downvoteQuestion(req , res){
+const downvoteQuestion = async (req , res) => {
 
     try{
 
@@ -165,7 +165,7 @@ export async function downvoteQuestion(req , res){
 }
 
 
-export async function searchCategory(req , res){
+const searchCategory = async (req , res) => {
     const reqCategories = req.body.categories
 
 
@@ -196,3 +196,5 @@ export async function searchCategory(req , res){
 
 
 }
+
+module.exports = {getQuestion , postQuestion , deleteQuestion , upvoteQuestion , downvoteQuestion , updateQuestion , searchCategory}

@@ -142,4 +142,56 @@ catch(e){
 }
 
 
-module.exports = {newAnswer , getAnswer , updateAnswer , deleteAnswer};
+const upvoteAnswer = async(req , res)=>{
+    try{
+        await Answer.findByIdAndUpdate(
+            req.params.answerId,
+            {
+                $push : {upvotes : req.user_id}
+            }
+        )
+    }
+    catch(err){
+        return res.status(400).send("Answer does not exist");
+    }
+
+
+    res.status(201).json({
+        success : true,
+        message : "Answer upvoted successfully",
+        
+
+    })
+}
+
+
+const downvoteAnswer = async (req , res) => {
+
+    try{
+
+        const answer = Answer.findById(req.params.answerId);
+
+        const hasUpvoted = answer.upvotes.includes(req.user_id);
+       
+        await Annswer.findByIdAndUpdate(
+            req.params.answerId,
+            hasUpvoted ? { $pull: { upvotes: req.user_id }, $push: { downvotes: req.user_id } } : { $push: { downvotes: req.user_id} }
+        )
+    }
+    catch(err){
+        return res.status(400).send("Answer does not exist");
+    }
+
+
+    res.status(201).json({
+        success : true,
+        message : "Answer downvoted successfully",
+        
+
+    })
+}
+
+
+
+
+module.exports = {newAnswer , getAnswer , updateAnswer , deleteAnswer , upvoteAnswer , downvoteAnswer};

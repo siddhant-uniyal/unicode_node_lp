@@ -179,3 +179,5 @@ const unfollow = async (req , res) =>{
 })
 }
 
+
+module.exports = {login , register , unfollow , follow , getMyProfile , logout};

@@ -13,5 +13,9 @@ router.route("/answer/:answerId")
 .put( isAuthenticated, updateAnswer)
 .delete( isAuthenticated , deleteAnswer)
 
+router.post("/answer/upvote/:answerId" , isAuthenticated , upvoteAnswer);
+
+router.post("/answer/downvote/:asnwerId" , isAuthenticated , downvoteAnswer);
+
 
 module.exports =  router;

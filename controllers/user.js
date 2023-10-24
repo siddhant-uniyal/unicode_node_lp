@@ -24,7 +24,7 @@ const nodemailer = require("nodemailer");
 
 
 
-const login = async (req, res, next) => {
+export async function login(req, res, next){
   const user = await User.findOne({ _id: req.user.user_id });
 
   if (!user) return res.status(401).send("User doesn't exist");
@@ -45,7 +45,7 @@ const login = async (req, res, next) => {
   res.send("Successful login attempt , welcome back");
 };
 
-const register = async (req, res) => {
+export async function register(req, res){
   const { name, email, password } = req.body;
   try {
     let user = await User.findOne({ email });
@@ -93,7 +93,7 @@ const register = async (req, res) => {
 
 };
 
-const getMyProfile = async (req, res) => {
+export async function getMyProfile(req, res){
   const user = await User.findOne({ _id: req.user });
 
   if (user) {
@@ -110,7 +110,71 @@ const logout = (req, res) => {
   res.send("hello");
 };
 
-module.exports.login = login;
-module.exports.register = register;
-module.exports.getMyProfile = getMyProfile;
-module.exports.logout = logout;
+
+export async function follow(req , res){
+
+
+    try{
+    await User.findByIdAndUpdate(
+      req.params.userId,
+      {
+        $push : {followers : req.user_id}
+      }
+    )
+    }catch(err){
+      return res.status(400).send("Followers of user couldn't be updated");
+    }
+
+    try{
+      await User.findByIdAndUpdate(
+        req_user,
+        {
+          $push : {following : req.params.id}
+        }
+      )
+    }catch(err){
+      return res.status(400).send("Following could not be updated properly");
+    }
+
+    res.status(201).json({
+      success : true,
+      message : "User followed successfully and following updated successfully",
+      createdAnswer
+
+  })
+}
+
+
+export async function unfollow(req , res){
+
+
+
+  try{
+  await User.findByIdAndUpdate(
+    req.params.userId,
+    {
+      $pull : {followers : req.user_id}
+    }
+  )
+  }catch(err){
+    return res.status(400).send("Followers of user couldn't be updated");
+  }
+
+  try{
+    await User.findByIdAndUpdate(
+      req_user,
+      {
+        $pull : {following : req.params.id}
+      }
+    )
+  }catch(err){
+    return res.status(400).send("Following could not be updated properly");
+  }
+
+  res.status(201).json({
+    success : true,
+    message : "User unfollowed successfully and following of user updated successfully",
+    createdAnswer
+
+})
+}

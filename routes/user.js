@@ -15,12 +15,12 @@ router.get("/logout" , isAuthenticated,logout)
 
 router.get("/myprofile" , isAuthenticated ,getMyProfile)
 
-router.post("/follow" , isAuthenticated , follow);
-router.post("/unfollow" , isAuthenticated , unfollow);
+router.post("/follow/:userId" , isAuthenticated , follow);
+router.post("/unfollow/:userId" , isAuthenticated , unfollow);
 
-router.post("/upvote" , isAuthenticated , upvote);
+router.post("/upvote/:entityId" , isAuthenticated , upvote);
 
-router.post("/downvote" , isAuthenticated , downvote);
+router.post("/downvote/:entityId" , isAuthenticated , downvote);
 
 
 

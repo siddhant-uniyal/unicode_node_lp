@@ -24,7 +24,7 @@ const nodemailer = require("nodemailer");
 
 
 
-export async function login(req, res, next){
+const login = async(req, res)=>{
   const user = await User.findOne({ _id: req.user.user_id });
 
   if (!user) return res.status(401).send("User doesn't exist");
@@ -45,7 +45,7 @@ export async function login(req, res, next){
   res.send("Successful login attempt , welcome back");
 };
 
-export async function register(req, res){
+const register = async(req, res)=>{
   const { name, email, password } = req.body;
   try {
     let user = await User.findOne({ email });
@@ -93,7 +93,7 @@ export async function register(req, res){
 
 };
 
-export async function getMyProfile(req, res){
+const getMyProfile = async(req, res)=>{
   const user = await User.findOne({ _id: req.user });
 
   if (user) {
@@ -106,12 +106,12 @@ export async function getMyProfile(req, res){
   }
 };
 
-const logout = (req, res) => {
+const logout = async (req, res) => {
   res.send("hello");
 };
 
 
-export async function follow(req , res){
+const follow = async (req , res) =>{
 
 
     try{
@@ -145,7 +145,7 @@ export async function follow(req , res){
 }
 
 
-export async function unfollow(req , res){
+const unfollow = async (req , res) =>{
 
 
 

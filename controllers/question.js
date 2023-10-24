@@ -113,3 +113,25 @@ catch(e){
 }
 }
 
+export async function upvoteQuestion(req , res){
+
+    try{
+        await Question.findByIdAndUpdate(
+            req.params.questionId,
+            {
+                $push : {upvotes : req.user_id}
+            }
+        )
+    }
+    catch(err){
+        return res.status(400).send("Question does not exist");
+    }
+
+
+    res.status(201).json({
+        success : true,
+        message : "Question upvoted successfully",
+        
+
+    })
+}

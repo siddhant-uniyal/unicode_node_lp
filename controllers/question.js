@@ -135,3 +135,31 @@ export async function upvoteQuestion(req , res){
 
     })
 }
+
+
+
+export async function downvoteQuestion(req , res){
+
+    try{
+
+        const question = Question.findById(req.params.questionId);
+
+        const hasUpvoted = question.upvotes.includes(req.user_id);
+       
+        await Question.findByIdAndUpdate(
+            req.params.questionId,
+            hasUpvoted ? { $pull: { upvotes: req.user_id }, $push: { downvotes: req.user_id } } : { $push: { downvotes: req.user_id} }
+        )
+    }
+    catch(err){
+        return res.status(400).send("Question does not exist");
+    }
+
+
+    res.status(201).json({
+        success : true,
+        message : "Question downvoted successfully",
+        
+
+    })
+}

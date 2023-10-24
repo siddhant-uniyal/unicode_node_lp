@@ -18,9 +18,7 @@ router.get("/myprofile" , isAuthenticated ,getMyProfile)
 router.post("/follow/:userId" , isAuthenticated , follow);
 router.post("/unfollow/:userId" , isAuthenticated , unfollow);
 
-router.post("/upvote/:entityId" , isAuthenticated , upvote);
 
-router.post("/downvote/:entityId" , isAuthenticated , downvote);
 
 
 

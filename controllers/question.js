@@ -4,7 +4,7 @@ const Question =  require("../models/Question.js");
 
 
 
-const postQuestion = async (req , res)=>{
+export async function postQuestion(req , res){
     try{
     const {question , category} = req.body;
 
@@ -38,7 +38,7 @@ catch(e){
 }
 
 } 
-const getQuestion = async (req , res )=>{
+export async function getQuestion(req , res ){
     
     try{
 
@@ -56,7 +56,7 @@ catch(e){
 }
 
 } 
-const updateQuestion = async (req , res)=>{
+export async function updateQuestion(req , res){
     
     try{
     const updatedQuestion = await Question.findOneAndUpdate(
@@ -79,7 +79,7 @@ const updateQuestion = async (req , res)=>{
     
 
 }
-const deleteQuestion = async (req , res )=>{
+export async function deleteQuestion(req , res ){
     try{
     const deletedQuestion = await Question.findById(req.params.questionId);
 
@@ -113,8 +113,3 @@ catch(e){
 }
 }
 
-
-module.exports.postQuestion = postQuestion;
-module.exports.getQuestion = getQuestion;
-module.exports.updateQuestion = updateQuestion;
-module.exports.deleteQuestion = deleteQuestion;

@@ -15,6 +15,9 @@ router.get("/logout" , isAuthenticated,logout)
 
 router.get("/myprofile" , isAuthenticated ,getMyProfile)
 
+router.post("/follow" , isAuthenticated , follow);
+router.post("/unfollow" , isAuthenticated , unfollow);
+
 
 
 module.exports =  router;

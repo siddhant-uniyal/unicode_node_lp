@@ -13,5 +13,6 @@ router.route("/question/:questionId")
 .put( isAuthenticated,updateQuestion)
 .delete( isAuthenticated, deleteQuestion)
 
+router.get("/question/search/:category" , isAuthenticated , searchCategory);
 
 module.exports =  router;

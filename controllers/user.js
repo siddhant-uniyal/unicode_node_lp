@@ -77,6 +77,7 @@ const register = async(req, res)=>{
       }
   });
 
+  // console.log(process.env.PASSWORD);
     res.json({
       success: true,
       message: "Successful registration and email sent",

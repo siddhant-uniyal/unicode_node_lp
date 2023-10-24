@@ -173,7 +173,7 @@ const downvoteAnswer = async (req , res) => {
 
         const hasUpvoted = answer.upvotes.includes(req.user_id);
        
-        await Annswer.findByIdAndUpdate(
+        await Answer.findByIdAndUpdate(
             req.params.answerId,
             hasUpvoted ? { $pull: { upvotes: req.user_id }, $push: { downvotes: req.user_id } } : { $push: { downvotes: req.user_id} }
         )

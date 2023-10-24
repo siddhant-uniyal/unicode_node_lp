@@ -142,7 +142,4 @@ catch(e){
 }
 
 
-module.exports.newAnswer = newAnswer;
-module.exports.getAnswer = getAnswer;
-module.exports.updateAnswer = updateAnswer;
-module.exports.deleteAnswer = deleteAnswer;
+module.exports = {newAnswer , getAnswer , updateAnswer , deleteAnswer};

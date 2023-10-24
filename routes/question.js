@@ -15,4 +15,8 @@ router.route("/question/:questionId")
 
 router.get("/question/search/:category" , isAuthenticated , searchCategory);
 
+router.post("/question/upvote/:questionId" , isAuthenticated , upvoteQuestion);
+
+router.post("/question/downvote/:questionId" , isAuthenticated , downvoteQuestion);
+
 module.exports =  router;

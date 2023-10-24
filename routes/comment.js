@@ -13,5 +13,7 @@ router.route("/comment/:commentId")
 .put( isAuthenticated, updateComment)
 .delete( isAuthenticated , deleteComment)
 
+router.post("/comment/upvote/:commentId" , isAuthenticated , upvoteComment);
 
+router.post("/comment/downvote/:commentId" , isAuthenticated , downvoteComment);
 module.exports =  router;

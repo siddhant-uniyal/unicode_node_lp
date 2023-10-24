@@ -29,18 +29,18 @@ const schema = new mongoose.Schema({
 
     answers : {
         type : [mongoose.Schema.Types.ObjectId],
-        ref : 'Answer'  //this field has all the answers that are associated with this user. everytime an answer is created , i will PATCH this
+        // ref : 'Answer'  //this field has all the answers that are associated with this user. everytime an answer is created , i will PATCH this
         //field to contain the answer document id
     },
 
     questions : {
         type : [mongoose.Schema.Types.ObjectId],
-        ref : 'Question' //same logic as above
+        // ref : 'Question' //same logic as above
     },
 
     comments : {
         type : [mongoose.Schema.Types.ObjectId],
-        ref : 'Comment'
+        // ref : 'Comment'
     },
 
     views : {

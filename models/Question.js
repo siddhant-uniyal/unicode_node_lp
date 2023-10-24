@@ -11,7 +11,7 @@ const schema = new mongoose.Schema({
         required : true
     },
     
-    category : {
+    categories : {
         type : [String],
         enum : ['Science' , 'Philosophy' , 'Fashion' , 'Music' , 'Art' , 'Engineering' , 'Technology'], //add more
         required : true

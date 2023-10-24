@@ -163,3 +163,36 @@ export async function downvoteQuestion(req , res){
 
     })
 }
+
+
+export async function searchCategory(req , res){
+    const reqCategories = req.body.categories
+
+
+    const result = [];
+
+    for(const value of reqCategories){
+
+        await Question.find(
+            {categories : {$in:[value]}},
+            (err , data)=>{
+                if(err){
+                    return res.status(400).send("Questions of these categories could not be found");
+                }
+                else{
+                    result.append(data);
+                }
+            }
+        )
+    }
+
+
+    res.status(201).json({
+        success : true,
+        message : "Questions of desired categories found successfully",
+        result
+
+    })
+
+
+}

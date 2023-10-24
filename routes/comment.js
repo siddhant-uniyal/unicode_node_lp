@@ -1,5 +1,5 @@
 const express =  require("express")
-const { newComment , getComment , updateComment , deleteComment} = require("../controllers/comment.js");
+const { newComment , getComment , updateComment , deleteComment , upvoteComment , downvoteComment} = require("../controllers/comment.js");
 const  isAuthenticated  =  require("../middlewares/auth.js");
 const router = express.Router();
 

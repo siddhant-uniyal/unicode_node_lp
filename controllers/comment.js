@@ -168,7 +168,4 @@ catch(e){
 }
 
 
-module.exports.newComment = newComment;
-module.exports.getComment = getComment;
-module.exports.updateComment = updateComment;
-module.exports.deleteComment = deleteComment;
+module.exports = {newComment , getComment , updateComment , deleteComment};

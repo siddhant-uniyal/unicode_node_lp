@@ -5,18 +5,18 @@ const nodemailer = require("nodemailer");
 
 
   
-  const transporter = nodemailer.createTransport({
-    service : "gmail",
-   
-    auth : {
-      user : process.env.EMAIL,
-      pass : process.env.PASSWORD
-    },
-    tls: {
-      rejectUnauthorized: false
-    }
-
-  })
+// const transporter = nodemailer.createTransport({
+//   service : "gmail",
+ 
+//   auth : {
+//     user : process.env.EMAIL,
+//     pass : process.env.PASSWORD
+//   },
+//   tls: {
+//     rejectUnauthorized: false
+//   }
+ 
+// })
 
 
 
@@ -61,7 +61,14 @@ const register = async(req, res)=>{
     user = await User.create({ name, email, password: hashedPassword });
 
     const authToken = jwt.sign({ user_id: user._id }, process.env.JWT_SECRET);
-
+    let transporter = nodemailer.createTransport({
+      service : "gmail",
+     
+      auth : {
+        user : process.env.EMAIL,
+        pass : process.env.PASSWORD
+      }
+    })
     const mailOptions = {
       from : process.env.EMAIL,
       to : req.body.email,
@@ -73,7 +80,8 @@ const register = async(req, res)=>{
       if(err) {
           console.log(err.message);
       } else {
-          console.log(data);
+          // console.log(data);
+          console.log('Email sent successfully')
       }
   });
 
@@ -86,7 +94,7 @@ const register = async(req, res)=>{
       info
     });
   } catch (e) {
-    res.json({ Error: e.message });
+    res.status(400).json({ Error: e.message });
   }
 
 

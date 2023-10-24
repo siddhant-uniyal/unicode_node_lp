@@ -18,6 +18,10 @@ router.get("/myprofile" , isAuthenticated ,getMyProfile)
 router.post("/follow" , isAuthenticated , follow);
 router.post("/unfollow" , isAuthenticated , unfollow);
 
+router.post("/upvote" , isAuthenticated , upvote);
+
+router.post("/downvote" , isAuthenticated , downvote);
+
 
 
 module.exports =  router;

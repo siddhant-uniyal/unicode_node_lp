@@ -168,4 +168,56 @@ catch(e){
 }
 
 
-module.exports = {newComment , getComment , updateComment , deleteComment};
+
+const upvoteComment = async(req , res)=>{
+    try{
+        await Comment.findByIdAndUpdate(
+            req.params.answerId,
+            {
+                $push : {upvotes : req.user_id}
+            }
+        )
+    }
+    catch(err){
+        return res.status(400).send("Comment does not exist");
+    }
+
+
+    res.status(201).json({
+        success : true,
+        message : "Comment upvoted successfully",
+        
+
+    })
+}
+
+
+const downvoteComment = async (req , res) => {
+
+    try{
+
+        const comment = Comment.findById(req.params.answerId);
+
+        const hasUpvoted = comment.upvotes.includes(req.user_id);
+       
+        await Comment.findByIdAndUpdate(
+            req.params.answerId,
+            hasUpvoted ? { $pull: { upvotes: req.user_id }, $push: { downvotes: req.user_id } } : { $push: { downvotes: req.user_id} }
+        )
+    }
+    catch(err){
+        return res.status(400).send("Comment does not exist");
+    }
+
+
+    res.status(201).json({
+        success : true,
+        message : "Comment downvoted successfully",
+        
+
+    })
+}
+
+
+
+module.exports = {newComment , getComment , updateComment , deleteComment , upvoteComment , downvoteComment};

@@ -5,14 +5,19 @@ const nodemailer = require("nodemailer");
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 
+const storage = multer.memoryStorage();
+const upload = multer({ 
+  storage: storage,
+limits : {fileSize : 10*1024*1024} 
+});
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_SECRET
 });
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+
 
 
 const login = async(req, res)=>{
@@ -184,11 +189,15 @@ const unfollow = async (req , res) =>{
 const uploadpic = async (req, res) => {
   try {
 
-    const profilePicBuffer = req.file.map(file => ({ data: file.buffer, contentType: file.mimetype }));
+    if(!req.file){
+      res.status(400).send("Please select a file to upload");
+    }
+
+    const profilePicBuffer = req.files.map(file => ({ data: file.buffer, contentType: file.mimetype }));
     
     const cloudinaryLink = [];
 
-    for (const file of req.file) {
+    for (const file of req.files) {
       const result = await cloudinary.uploader.upload(file.buffer.toString('base64'), { resource_type: 'auto' });
       cloudinaryLink.push(result.secure_url);
     }

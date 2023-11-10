@@ -2,26 +2,17 @@ const User = require("../models/User.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+const multer = require("multer");
+const cloudinary = require("cloudinary").v2;
 
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET
+});
 
-  
-// const transporter = nodemailer.createTransport({
-//   service : "gmail",
- 
-//   auth : {
-//     user : process.env.EMAIL,
-//     pass : process.env.PASSWORD
-//   },
-//   tls: {
-//     rejectUnauthorized: false
-//   }
- 
-// })
-
-
-
-
-
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 
 const login = async(req, res)=>{
@@ -46,7 +37,7 @@ const login = async(req, res)=>{
 };
 
 const register = async(req, res)=>{
-  const { name, email, password } = req.body;
+  const { name, email, password ,auth } = req.body;
   try {
     let user = await User.findOne({ email });
 
@@ -58,9 +49,10 @@ const register = async(req, res)=>{
 
     const hashedPassword = await bcrypt.hash(password, process.env.SALT);
 
-    user = await User.create({ name, email, password: hashedPassword });
+    user = await User.create({ name, email, password: hashedPassword , auth});
 
     const authToken = jwt.sign({ user_id: user._id }, process.env.JWT_SECRET);
+
     let transporter = nodemailer.createTransport({
       service : "gmail",
      
@@ -69,6 +61,7 @@ const register = async(req, res)=>{
         pass : process.env.PASSWORD
       }
     })
+    
     const mailOptions = {
       from : process.env.EMAIL,
       to : req.body.email,
@@ -188,5 +181,33 @@ const unfollow = async (req , res) =>{
 })
 }
 
+const uploadpic = async (req, res) => {
+  try {
 
-module.exports = {login , register , unfollow , follow , getMyProfile , logout};
+    const profilePicBuffer = req.file.map(file => ({ data: file.buffer, contentType: file.mimetype }));
+    
+    const cloudinaryLink = [];
+
+    for (const file of req.file) {
+      const result = await cloudinary.uploader.upload(file.buffer.toString('base64'), { resource_type: 'auto' });
+      cloudinaryLink.push(result.secure_url);
+    }
+
+    const user = await User.findByIdAndUpdate(req.user.user_id, {
+      $set: {
+        profilePictureBuffer: profilePicBuffer,
+        profilePictureCloudinary: cloudinaryLink 
+      }
+    }, { new: true });
+
+    res.status(200).json({
+      success:'true',
+       message: 'Profile picture(s) uploaded successfully', 
+       user });
+  } catch (err) {
+    return res.status(500).send('File could not be uploaded properly');
+  }
+};
+
+
+module.exports = {login , register , unfollow , follow , getMyProfile , logout , uploadpic};

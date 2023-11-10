@@ -113,17 +113,26 @@ const updateComment = async (req , res)=>{
 }
 const deleteComment = async (req , res )=>{
     try{
-    const deletedComment = await Comment.findByIdAndDelete(req.params.commentId);
+
+    const commentToDelete = await Comment.findById(req.params.commentId);
+
+    if(!commentToDelete) return res.status(404).send("Invalid ID , comment does not exist");
+
+    const idOfUser = commentToDelete.user;
+
+    if(req.user.user_id != idOfUser && req.auth == false ){
+        return res.status(404).send("Only admins can delete comments of other users");
+    }
 
 
-    if(!deletedComment) return res.status(404).send("Invalid ID , comment does not exist");
+    await commentToDelete.remove();
 
 
-    if(deletedComment.parentType=="Question"){
+    if(commentToDelete.parentType=="Question"){
     await Question.findByIdAndUpdate(
-        deletedComment.parentId,
+        commentToDelete.parentId,
         {
-            $pull : { comments : deletedComment._id}
+            $pull : { comments : commentToDelete._id}
         },
         (err)=>{
             if(err) return res.status(400).send("Question couldn't be updated properly")
@@ -132,9 +141,9 @@ const deleteComment = async (req , res )=>{
     }
     else{
         await Comment.findByIdAndUpdate(
-            deletedComment.parentId,
+            commentToDelete.parentId,
             {
-                $pull : { comments : deletedComment._id}
+                $pull : { comments : commentToDelete._id}
             },
             (err)=>{
                 if(err) return res.status(400).send("Comment couldn't be updated properly")
@@ -144,7 +153,7 @@ const deleteComment = async (req , res )=>{
     await User.findByIdAndUpdate(
         req.user._id,
         {
-            $pull : { comments : deletedComment._id}
+            $pull : { comments : commentToDelete._id}
         },
         (err)=>{
             if(err) return res.status(400).send("User could not be updated successfully")

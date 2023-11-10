@@ -48,8 +48,24 @@ const schema = new mongoose.Schema({
         ref : 'User'
     },
 
+    auth : {
+        type : String,
+        enum : ['Normal' , 'Admin'],
+        required : true
+    },
+
     education : {
         type : String,
+    },
+
+    profilePictureBuffer: [{
+        type: String,
+        data: Buffer
+      }],
+
+
+    profilePictureCloudinary: {
+        type : [String]
     }
 },{
     timestamps : true

@@ -100,16 +100,25 @@ const updateAnswer = async (req , res)=>{
 }
 const deleteAnswer = async (req , res )=>{
     try{
-    const deletedAnswer = await Answer.findByIdAndDelete(req.params.answerId);
+
+    const answerToDelete = await Answer.findById(req.params.answerId);
+
+    if(!answerToDelete) return res.status(404).send("Invalid ID , answer does not exist");
+    
+    const idOfUser = answerToDelete.user;
 
 
-    if(!deletedAnswer) return res.status(404).send("Invalid ID , answer does not exist");
+    if(req.user.user_id != idOfUser && req.auth == false ){
+        return res.status(404).send("Only admins can delete answers of other users");
+    }
+
+    await answerToDelete.remove();
 
 
     await Question.findByIdAndUpdate(
-        deletedAnswer.question,
+        answerToDelete.question,
         {
-            $pull : { answers : deletedAnswer._id}
+            $pull : { answers : answerToDelete._id}
         },
         (err)=>{
             if(err) return res.status(400).send("Question couldn't be updated properly")
@@ -118,7 +127,7 @@ const deleteAnswer = async (req , res )=>{
     await User.findByIdAndUpdate(
         req.user._id,
         {
-            $pull : { answers : deletedAnswer._id}
+            $pull : { answers : answerToDelete._id}
         },
         (err)=>{
             if(err) return res.status(400).send("User could not be updated successfully")

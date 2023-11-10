@@ -1,6 +1,7 @@
 const express =  require("express")
 const { newComment , getComment , updateComment , deleteComment , upvoteComment , downvoteComment} = require("../controllers/comment.js");
 const  isAuthenticated  =  require("../middlewares/auth.js");
+const isAdmin = require("../middlewares/verifyLevel.js")
 const router = express.Router();
 
 
@@ -11,7 +12,7 @@ router.get("/comment/mycomments"  , isAuthenticated, getComment);
 
 router.route("/comment/:commentId")
 .put( isAuthenticated, updateComment)
-.delete( isAuthenticated , deleteComment)
+.delete( isAuthenticated , isAdmin , deleteComment)
 
 router.post("/comment/upvote/:commentId" , isAuthenticated , upvoteComment);
 

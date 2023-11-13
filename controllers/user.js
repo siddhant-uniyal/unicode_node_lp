@@ -5,11 +5,6 @@ const nodemailer = require("nodemailer");
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 
-const storage = multer.memoryStorage();
-const upload = multer({ 
-  storage: storage,
-limits : {fileSize : 10*1024*1024} 
-});
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -21,24 +16,43 @@ cloudinary.config({
 
 
 const login = async(req, res)=>{
-  const user = await User.findOne({ _id: req.user.user_id });
+  try{
+  const {email , password} = req.body;
+  const user = await User.findOne({ email });
 
+  
+  
+  console.log(user);
   if (!user) return res.status(401).send("User doesn't exist");
+  const result = await bcrypt.compare(
+    password,
+    user.password,
+    // (e, result) => {
+    //   if (e) {
+    //     return res.json({ Error: e.message });
+    //   }
+    //   return result;
+    // }
+    //linting
+  );
 
-  // const result = bcrypt.compare(
-  //   req.body.password,
-  //   user.password,
-  //   (e, result) => {
-  //     if (e) {
-  //       return res.json({ Error: e.message });
-  //     }
-  //     return result;
-  //   }
-  // );
+  console.log(result);
 
-  // if (!result) res.status(400).send("Incorrect password , try again");
+  if (!result) return res.status(400).send("Incorrect password , try again");
 
-  res.send("Successful login attempt , welcome back");
+  const authToken = jwt.sign({ user_id: user._id }, process.env.JWT_SECRET , {expiresIn:"1d"}); //expires in
+
+  //res.json("Successful login attempt , welcome back");
+
+  res.status(200).json({
+    "success" : "true",
+    authToken,
+  })
+
+}
+catch(err){
+  return res.status(400).send(err.message);
+}
 };
 
 const register = async(req, res)=>{
@@ -52,11 +66,11 @@ const register = async(req, res)=>{
         message: "User already exists",
       });
 
-    const hashedPassword = await bcrypt.hash(password, process.env.SALT);
+    const hashedPassword =  await bcrypt.hash(password, process.env.SALT);
 
     user = await User.create({ name, email, password: hashedPassword , auth});
 
-    const authToken = jwt.sign({ user_id: user._id }, process.env.JWT_SECRET);
+    const authToken = jwt.sign({ user_id: user._id }, process.env.JWT_SECRET ); //expires in
 
     let transporter = nodemailer.createTransport({
       service : "gmail",
@@ -189,25 +203,41 @@ const unfollow = async (req , res) =>{
 const uploadpic = async (req, res) => {
   try {
 
-    if(!req.file){
-      res.status(400).send("Please select a file to upload");
+    if(!req.files.profilepics){
+      return res.status(400).send("Please select a file to upload");
     }
 
-    const profilePicBuffer = req.files.map(file => ({ data: file.buffer, contentType: file.mimetype }));
+
+    const allowedext = /jpeg|jpg|png/
+
+
+    const isExtOk = allowedext.test(path.extname(file.originalname).toLowerCase());
+
+    const mimetype = allowedext.test(file.mimetype);
+
+
+    if(!(isExtOk && mimetype)){
+      return res.status(400).send("Please upload files with : jpg , jpeg , png extensions");
+    }
+
+   
     
     const cloudinaryLink = [];
 
-    for (const file of req.files) {
-      const result = await cloudinary.uploader.upload(file.buffer.toString('base64'), { resource_type: 'auto' });
+    for (const file of req.files.profilepics) {
+      const result = await cloudinary.uploader.upload(file);
       cloudinaryLink.push(result.secure_url);
     }
 
-    const user = await User.findByIdAndUpdate(req.user.user_id, {
+    const user = await User.findByIdAndUpdate(req.user.user_id,
+      {
       $set: {
-        profilePictureBuffer: profilePicBuffer,
+        // profilePictureBuffer: profilePicBuffer,
         profilePictureCloudinary: cloudinaryLink 
       }
-    }, { new: true });
+    },
+    { new: true });
+    
 
     res.status(200).json({
       success:'true',

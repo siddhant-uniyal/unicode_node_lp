@@ -112,7 +112,7 @@ const deleteAnswer = async (req , res )=>{
         return res.status(404).send("Only admins can delete answers of other users");
     }
 
-    await answerToDelete.remove();
+    await Answer.deleteOne({_id : req.params.answerId})
 
 
     await Question.findByIdAndUpdate(
@@ -120,18 +120,18 @@ const deleteAnswer = async (req , res )=>{
         {
             $pull : { answers : answerToDelete._id}
         },
-        (err)=>{
-            if(err) return res.status(400).send("Question couldn't be updated properly")
-        }
+        // (err)=>{
+        //     if(err) return res.status(400).send("Question couldn't be updated properly")
+        // }
     )
     await User.findByIdAndUpdate(
         req.user._id,
         {
             $pull : { answers : answerToDelete._id}
         },
-        (err)=>{
-            if(err) return res.status(400).send("User could not be updated successfully")
-        }
+        // (err)=>{
+        //     if(err) return res.status(400).send("User could not be updated successfully")
+        // }
     )
 
     
@@ -139,7 +139,7 @@ const deleteAnswer = async (req , res )=>{
      res.status(201).send({
         success : true,
         message : "Answer Removed Successfully ,Question Updated Successfully and User updated Successfully",
-        deletedQuestion
+        answerToDelete
 } )
 
 }

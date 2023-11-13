@@ -10,7 +10,7 @@ const postQuestion = async (req , res) => {
 
     const postedQuestion = new Question({
         question :question,
-        category : category,
+        categories : category,
     })
 
     await postedQuestion.save();
@@ -69,7 +69,7 @@ const updateQuestion = async (req , res) => {
 
      res.status(201).send({
         success : true,
-        message : "Task Updated Successfully",
+        message : "Question Updated Successfully",
         updatedQuestion
     })
 }catch(e){
@@ -94,7 +94,7 @@ const deleteQuestion = async(req , res )=>{
 
     if(questionToDelete.answers.length >= 1)return res.status(400).send("Sorry , you can't delete a question once you have recieved an answer");
 
-    await questionToDelete.remove();
+    await Question.deleteOne({ _id: req.params.questionId });
     
 
     await User.findByIdAndUpdate(
@@ -180,17 +180,17 @@ const searchCategory = async (req , res) => {
 
     for(const value of reqCategories){
 
-        await Question.find(
-            {categories : {$in:[value]}},
-            (err , data)=>{
-                if(err){
-                    return res.status(400).send("Questions of these categories could not be found");
-                }
-                else{
-                    result.append(data);
-                }
+        try {
+            const data = await Question.find({ categories: { $in: reqCategories } });
+            if(data){
+                result.push(data);
             }
-        )
+            else{
+                return res.status(400).send("Questions of these categories could not be found");
+            }
+         } catch (err) {
+            console.log(err);
+         }
     }
 
 

@@ -1,0 +1,15 @@
+{
+    "name" : "SidAsAdmin",
+    "email" : "sid@gmail.com",
+    "password" : "12345678",
+    "auth" : "Admin"
+}
+
+
+
+{
+    "name" : "SidAsUser",
+    "email" : "sid1@gmail.com",
+    "password" : "12345678",
+    "auth" : "Normal"
+}

@@ -13,7 +13,7 @@ const schema = new mongoose.Schema({
     password:{
         type : String,
         required:true,
-        select : false,
+        // select : false,
     },
 
     followers : {
@@ -58,10 +58,10 @@ const schema = new mongoose.Schema({
         type : String,
     },
 
-    profilePictureBuffer: [{
-        type: String,
-        data: Buffer
-      }],
+    // profilePictureBuffer: [{
+    //     type: String,
+    //     data: Buffer
+    //   }],
 
 
     profilePictureCloudinary: {

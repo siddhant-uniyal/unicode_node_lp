@@ -1,3 +1,6 @@
+const User = require("../models/User")
+
+
 const isAdmin = async(req , res , next)=>{
     try{
         const userToVerify = await User.findById(req.user.user_id);

@@ -14,7 +14,7 @@ router.route("/question/:questionId")
 .put( isAuthenticated,updateQuestion)
 .delete( isAuthenticated, isAdmin , deleteQuestion)
 
-router.get("/question/search/:category" , isAuthenticated , searchCategory);
+router.get("/question/search" , isAuthenticated , searchCategory);
 
 router.post("/question/upvote/:questionId" , isAuthenticated , upvoteQuestion);
 

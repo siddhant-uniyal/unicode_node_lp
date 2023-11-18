@@ -210,7 +210,7 @@ const uploadpic = async (req, res) => {
 
     const allowedext = /jpeg|jpg|png/
 
-
+    for(const file of req.files.profilepics){
     const isExtOk = allowedext.test(path.extname(file.originalname).toLowerCase());
 
     const mimetype = allowedext.test(file.mimetype);
@@ -218,6 +218,7 @@ const uploadpic = async (req, res) => {
 
     if(!(isExtOk && mimetype)){
       return res.status(400).send("Please upload files with : jpg , jpeg , png extensions");
+    }
     }
 
    

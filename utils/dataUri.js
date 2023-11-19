@@ -8,11 +8,8 @@ const getDataUri = (file) =>{
 
     const extName = path.extname(file.originalName).toString();
 
-    console.log(extName);
-
     return parser.format(extName , file.buffer)
 
-    
 }
 
 module.exports = getDataUri

@@ -2,6 +2,8 @@ const User = require("../models/User.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+const cloudinary = require("cloudinary").v2
+const getDataUri = require("../utils/dataUri.js");
 
 const login = async(req, res)=>{
   try{
@@ -191,39 +193,30 @@ const unfollow = async (req , res) =>{
 const uploadpic = async (req, res) => {
   try {
 
-    if(!req.files.profilepics){
+    const file = req.file;
+
+    if(!file){
       return res.status(400).send("Please select a file to upload");
     }
-    
+
+    const fileUri = getDataUri(file);
+
+    const mycloud = await cloudinary.v2.uploader.upload(fileUri.content);
 
 
     const allowedext = /jpeg|jpg|png/
 
-    for(const file of req.files.profilepics){
-    const isExtOk = allowedext.test(path.extname(file.originalname).toLowerCase());
 
-    const mimetype = allowedext.test(file.mimetype);
+    const isExtOk = allowedext.test(fileUri.extName);
 
-
-    if(!(isExtOk && mimetype)){
+    if(!isExtOk){
       return res.status(400).send("Please upload files with : jpg , jpeg , png extensions");
     }
-    }
-
-   
     
-    const cloudinaryLink = [];
-
-    for (const file of req.files.profilepics) {
-      const result = await cloudinary.uploader.upload(file);
-      cloudinaryLink.push(result.secure_url);
-    }
-
     const user = await User.findByIdAndUpdate(req.user.user_id,
       {
       $set: {
-        // profilePictureBuffer: profilePicBuffer,
-        profilePictureCloudinary: cloudinaryLink 
+        profilePictureCloudinary: mycloud.secure_url
       }
     },
     { new: true });

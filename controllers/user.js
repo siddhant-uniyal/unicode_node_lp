@@ -2,18 +2,6 @@ const User = require("../models/User.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
-const multer = require("multer");
-const cloudinary = require("cloudinary").v2;
-
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_SECRET
-});
-
-
-
 
 const login = async(req, res)=>{
   try{
@@ -207,7 +195,7 @@ const uploadpic = async (req, res) => {
       return res.status(400).send("Please select a file to upload");
     }
     
-    
+
 
     const allowedext = /jpeg|jpg|png/
 

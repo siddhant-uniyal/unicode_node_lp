@@ -206,7 +206,8 @@ const uploadpic = async (req, res) => {
     if(!req.files.profilepics){
       return res.status(400).send("Please select a file to upload");
     }
-
+    
+    
 
     const allowedext = /jpeg|jpg|png/
 

@@ -1,5 +1,6 @@
 const Comment =  require("../models/Comment.js");
 const Question = require("../models/Question.js");
+const ErrorHandler = require("../utils/errorHandler.js");
 
 
 
@@ -24,9 +25,9 @@ const newComment = async (req , res)=>{
         {
              $push: { comments : createdComment._id }
         },
-        (err)=>{
-            if(err) return res.status(400).send("Question could not be updated properly")
-        }
+        // (err)=>{
+        //     if(err) return next(new ErrorHandler("Question could not be updated properly" , 400));
+        // }
     )
     }
     else{
@@ -35,9 +36,9 @@ const newComment = async (req , res)=>{
             {
                  $push: { comment : createdComment._id }
             },
-            (err)=>{
-                if(err) return res.status(400).send("Comment could not be updated properly")
-            }
+            // (err)=>{
+            //     if(err) return res.status(400).send("Comment could not be updated properly")
+            // }
         )
     }
 
@@ -48,7 +49,7 @@ const newComment = async (req , res)=>{
             $push : { comments : createdComment._id}
         },
         (err)=>{
-            if(err) return res.status(400).send("User could not be updated successfully")
+            if(err) return next(new ErrorHandler("User could not be updated successfully" , 400));
         }
     )
 
@@ -95,7 +96,7 @@ const updateComment = async (req , res)=>{
         {new : true}
     );
 
-    if(!updatedComment) return res.status(404).send("Invalid ID , comment does not exist");
+    if(!updatedComment) return next(new ErrorHandler("Invalid ID , Comment does not exist" , 400));
 
      res.status(201).send({
         success : true,
@@ -114,12 +115,12 @@ const deleteComment = async (req , res )=>{
 
     const commentToDelete = await Comment.findById(req.params.commentId);
 
-    if(!commentToDelete) return res.status(404).send("Invalid ID , comment does not exist");
+    if(!commentToDelete) return next(new ErrorHandler("Invalid ID , Comment does not exist" , 404));
 
     const idOfUser = commentToDelete.user;
 
     if(req.user.user_id != idOfUser && req.auth == false ){
-        return res.status(404).send("Only admins can delete comments of other users");
+        return next(new ErrorHandler("Only admins can delete comments of other users" , 401));
     }
 
 
@@ -133,7 +134,7 @@ const deleteComment = async (req , res )=>{
             $pull : { comments : commentToDelete._id}
         },
         (err)=>{
-            if(err) return res.status(400).send("Question couldn't be updated properly")
+            if(err) return next(new ErrorHandler("Question could not be updated properly" , 400));
         }
     )
     }
@@ -144,7 +145,7 @@ const deleteComment = async (req , res )=>{
                 $pull : { comments : commentToDelete._id}
             },
             (err)=>{
-                if(err) return res.status(400).send("Comment couldn't be updated properly")
+                if(err) return next(new ErrorHandler("Comment could not be updated properly" , 400));
             }
         )
     }
@@ -154,7 +155,7 @@ const deleteComment = async (req , res )=>{
             $pull : { comments : commentToDelete._id}
         },
         (err)=>{
-            if(err) return res.status(400).send("User could not be updated successfully")
+            if(err) return next(new ErrorHandler("User could not be updated properly" , 400));
         }
     )
 
@@ -186,7 +187,7 @@ const upvoteComment = async(req , res)=>{
         )
     }
     catch(err){
-        return res.status(400).send("Comment does not exist");
+        return next(new ErrorHandler("Comment does not exist" , 400));
     }
 
 
@@ -213,7 +214,7 @@ const downvoteComment = async (req , res) => {
         )
     }
     catch(err){
-        return res.status(400).send("Comment does not exist");
+        return next(new ErrorHandler("Comment does not exist" , 400));
     }
 
 

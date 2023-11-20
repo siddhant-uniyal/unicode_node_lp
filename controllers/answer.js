@@ -1,5 +1,3 @@
-
-
 const Answer =  require("../models/Answer.js");
 const Question = require("../models/Question.js");
 const User = require("../models/User.js");
@@ -100,7 +98,7 @@ const updateAnswer = async (req , res , next)=>{
     
 
 }
-const deleteAnswer = async (req , res )=>{
+const deleteAnswer = async (req , res , next )=>{
     try{
 
     const answerToDelete = await Answer.findById(req.params.answerId);

@@ -11,10 +11,8 @@ const login = async(req, res)=>{
   const {email , password} = req.body;
   const user = await User.findOne({ email });
 
-  
-  
-  // console.log(user);
-  if (!user) return res.status(401).send("User doesn't exist");
+
+  if (!user) return next(new ErrorHandler("User does not exist" , 400));
   const result = await bcrypt.compare(
     password,
     user.password,
@@ -29,7 +27,7 @@ const login = async(req, res)=>{
 
   console.log(result);
 
-  if (!result) return res.status(400).send("Incorrect password , try again");
+  if (!result) return next(new ErrorHandler("Incorrect password , try again" , 400));
 
   const authToken = jwt.sign({ user_id: user._id }, process.env.JWT_SECRET , {expiresIn:"1d"}); //expires in
 
@@ -134,7 +132,7 @@ const follow = async (req , res) =>{
       }
     )
     }catch(err){
-      return res.status(400).send("Followers of user couldn't be updated");
+      return next(new ErrorHandler("Followers could not be updated" , 400));
     }
 
     try{
@@ -145,7 +143,7 @@ const follow = async (req , res) =>{
         }
       )
     }catch(err){
-      return res.status(400).send("Following could not be updated properly");
+      return next(new ErrorHandler("Following could not be updated" , 400));
     }
 
     res.status(201).json({
@@ -169,7 +167,7 @@ const unfollow = async (req , res) =>{
     }
   )
   }catch(err){
-    return res.status(400).send("Followers of user couldn't be updated");
+    return next(new ErrorHandler("Followers of users could not be updated" , 400));
   }
 
   try{
@@ -180,7 +178,7 @@ const unfollow = async (req , res) =>{
       }
     )
   }catch(err){
-    return res.status(400).send("Following could not be updated properly");
+    return next(new ErrorHandler("Following could not be updated" , 400));
   }
 
   res.status(201).json({
@@ -198,12 +196,10 @@ const uploadpic = async (req, res) => {
 
 
     if(!file){
-      return res.status(400).send("Please select a file to upload");
+      return next(new ErrorHandler("Please select a file to upload" , 400));
     }
 
     const fileUri = getDataUri(file);
-
-    console.log("this happened")
 
     console.log(fileUri.content);
 
@@ -232,7 +228,7 @@ const uploadpic = async (req, res) => {
        user });
   } catch (err) {
     console.log(err.message);
-    return res.status(500).send('File could not be uploaded properly');
+    return next(new ErrorHandler("File could not be updated properly" , 400));
   }
 };
 

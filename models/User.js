@@ -58,14 +58,8 @@ const schema = new mongoose.Schema({
         type : String,
     },
 
-    // profilePictureBuffer: [{
-    //     type: String,
-    //     data: Buffer
-    //   }],
-
-
     profilePictureCloudinary: {
-        type : [String]
+        type : String
     }
 },{
     timestamps : true

@@ -5,6 +5,7 @@ const nodemailer = require("nodemailer");
 const cloudinary = require("cloudinary").v2
 const getDataUri = require("../utils/dataUri.js");
 
+
 const login = async(req, res)=>{
   try{
   const {email , password} = req.body;
@@ -12,7 +13,7 @@ const login = async(req, res)=>{
 
   
   
-  console.log(user);
+  // console.log(user);
   if (!user) return res.status(401).send("User doesn't exist");
   const result = await bcrypt.compare(
     password,
@@ -195,25 +196,28 @@ const uploadpic = async (req, res) => {
 
     const file = req.file;
 
+
     if(!file){
       return res.status(400).send("Please select a file to upload");
     }
 
     const fileUri = getDataUri(file);
 
-    const mycloud = await cloudinary.v2.uploader.upload(fileUri.content);
+    console.log("this happened")
 
+    console.log(fileUri.content);
 
-    const allowedext = /jpeg|jpg|png/
-
-
-    const isExtOk = allowedext.test(fileUri.extName);
-
-    if(!isExtOk){
-      return res.status(400).send("Please upload files with : jpg , jpeg , png extensions");
-    }
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_SECRET
+    });
     
-    const user = await User.findByIdAndUpdate(req.user.user_id,
+
+    const mycloud = await cloudinary.uploader.upload(fileUri.content);
+    
+    const user = await User.findByIdAndUpdate(
+      {_id : req.user.user_id},
       {
       $set: {
         profilePictureCloudinary: mycloud.secure_url
@@ -227,6 +231,7 @@ const uploadpic = async (req, res) => {
        message: 'Profile picture(s) uploaded successfully', 
        user });
   } catch (err) {
+    console.log(err.message);
     return res.status(500).send('File could not be uploaded properly');
   }
 };

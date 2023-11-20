@@ -1,8 +1,6 @@
-
-
 const Comment =  require("../models/Comment.js");
 const Question = require("../models/Question.js");
-const Comment = require("../models/Comment.js");
+
 
 
 const newComment = async (req , res)=>{

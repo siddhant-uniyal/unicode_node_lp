@@ -2,9 +2,11 @@
 
 const Answer =  require("../models/Answer.js");
 const Question = require("../models/Question.js");
-const User = require("../models/User.js")
+const User = require("../models/User.js");
+const ErrorHandler = require("../utils/errorHandler.js");
 
-const newAnswer = async (req , res)=>{
+
+const newAnswer = async (req , res , next)=>{
     try{
     const {answer} = req.body;
     const questionId = req.params.questionId;
@@ -13,6 +15,7 @@ const newAnswer = async (req , res)=>{
         answer,
         question : questionId
     })
+
 
 
     await createdAnswer.save();
@@ -25,7 +28,7 @@ const newAnswer = async (req , res)=>{
           }
         );
       } catch(err) {
-        return res.status(400).send("Question could not be updated properly");
+        return next(new ErrorHandler("Question could not be updated properly" , 400));
       }
 
 
@@ -37,11 +40,9 @@ const newAnswer = async (req , res)=>{
           }
         );
       } catch(err) {
-        return res.status(400).send("User could not be updated properly");
+        return next(new ErrorHandler("User could not be updated properly" , 400));
       }
 
-
-    
 
     res.status(201).json({
         success : true,
@@ -51,6 +52,7 @@ const newAnswer = async (req , res)=>{
     })
 }
 catch(e){
+
     res.json({
         "Error" : e.message
     });
@@ -75,7 +77,7 @@ catch(e){
 }
 
 } 
-const updateAnswer = async (req , res)=>{
+const updateAnswer = async (req , res , next)=>{
     
     try{
     const updatedAnswer = await Answer.findOneAndUpdate(
@@ -84,7 +86,7 @@ const updateAnswer = async (req , res)=>{
         {new : true}
     );
 
-    if(!updatedAnswer) return res.status(404).send("Invalid ID , answer does not exist");
+    if(!updatedAnswer) return next(new ErrorHandler("Invalid ID , answer does not exist" , 404));
 
      res.status(201).send({
         success : true,
@@ -103,13 +105,13 @@ const deleteAnswer = async (req , res )=>{
 
     const answerToDelete = await Answer.findById(req.params.answerId);
 
-    if(!answerToDelete) return res.status(404).send("Invalid ID , answer does not exist");
+    if(!answerToDelete) return next(new ErrorHandler("Invalid ID , answer does not exist" , 404));
     
     const idOfUser = answerToDelete.user;
 
 
     if(req.user.user_id != idOfUser && req.auth == false ){
-        return res.status(404).send("Only admins can delete answers of other users");
+        return next(new ErrorHandler("Only admins can delete answers of other users" , 401));
     }
 
     await Answer.deleteOne({_id : req.params.answerId})
@@ -151,7 +153,7 @@ catch(e){
 }
 
 
-const upvoteAnswer = async(req , res)=>{
+const upvoteAnswer = async(req , res , next)=>{
     try{
         await Answer.findByIdAndUpdate(
             req.params.answerId,
@@ -161,7 +163,7 @@ const upvoteAnswer = async(req , res)=>{
         )
     }
     catch(err){
-        return res.status(400).send("Answer does not exist");
+        return next(new ErrorHandler("Answer does not exist" , 404));
     }
 
 
@@ -174,7 +176,7 @@ const upvoteAnswer = async(req , res)=>{
 }
 
 
-const downvoteAnswer = async (req , res) => {
+const downvoteAnswer = async (req , res , next) => {
 
     try{
 
@@ -188,7 +190,7 @@ const downvoteAnswer = async (req , res) => {
         )
     }
     catch(err){
-        return res.status(400).send("Answer does not exist");
+        return next(new ErrorHandler("Answer does not exist" , 400));
     }
 
 
@@ -196,7 +198,6 @@ const downvoteAnswer = async (req , res) => {
         success : true,
         message : "Answer downvoted successfully",
         
-
     })
 }
 

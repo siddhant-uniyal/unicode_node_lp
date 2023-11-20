@@ -65,8 +65,7 @@ const updateQuestion = async (req , res) => {
         {new : true}
     );
 
-    if(!updatedQuestion) return res.status(404).send("Invalid ID , question does not exist");
-
+    if(!updatedQuestion) return next(new ErrorHandler("Invalid ID , Question does not exist" , 400));
      res.status(201).send({
         success : true,
         message : "Question Updated Successfully",
@@ -84,15 +83,15 @@ const deleteQuestion = async(req , res )=>{
 
     const questionToDelete = await Question.findById(req.params.questionId);
 
-    if(!questionToDelete) return res.status(404).send("Invalid ID , question does not exist");
+    if(!questionToDelete) return next(new ErrorHandler("Invalid ID , Question does not exist" , 400));
 
     const idOfUser = questionToDelete.user;
 
     if(req.user.user_id != idOfUser && req.auth == false ){
-        return res.status(404).send("Only admins can delete questions of other users");
+        next(new ErrorHandler("Only admins can delete questions of other users" , 400));
     }
 
-    if(questionToDelete.answers.length >= 1)return res.status(400).send("Sorry , you can't delete a question once you have recieved an answer");
+    if(questionToDelete.answers.length >= 1)return next(new ErrorHandler("Sorry , you can't delete a question once it's been answered" , 401));
 
     await Question.deleteOne({ _id: req.params.questionId });
     
@@ -103,7 +102,7 @@ const deleteQuestion = async(req , res )=>{
             $pull : { answers : questionToDelete._id}
         },
         (err)=>{
-            if(err) return res.status(400).send("User could not be updated successfully")
+            if(err) return next(new ErrorHandler("User could not be updated successfully" , 400));
         }
     )
     
@@ -131,7 +130,7 @@ const upvoteQuestion = async (req , res) => {
         )
     }
     catch(err){
-        return res.status(400).send("Question does not exist");
+        return next(new ErrorHandler("Question does not exist" , 400));
     }
 
 
@@ -159,7 +158,7 @@ const downvoteQuestion = async (req , res) => {
         )
     }
     catch(err){
-        return res.status(400).send("Question does not exist");
+        return next(new ErrorHandler("Invalid ID , Question does not exist" , 400));
     }
 
 
@@ -186,7 +185,7 @@ const searchCategory = async (req , res) => {
                 result.push(data);
             }
             else{
-                return res.status(400).send("Questions of these categories could not be found");
+                return next(new ErrorHandler("Questions of this category could not be found" , 400));
             }
          } catch (err) {
             console.log(err);

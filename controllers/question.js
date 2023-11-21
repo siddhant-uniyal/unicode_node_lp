@@ -27,7 +27,7 @@ const postQuestion = async (req , res) => {
         // }
     )
 
-    res.status(201).json({
+    res.status(200).json({
         success : true,
         message : "Question posted successfully",
         postedQuestion
@@ -193,7 +193,7 @@ const searchCategory = async (req , res) => {
     }
 
 
-    res.status(201).json({
+    res.status(200).json({
         success : true,
         message : "Questions of desired categories found successfully",
         result

@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-const JWT_SECRET = process.env.JWT_SECRET;
 const isAuthenticated = async(req,res,next)=>{
     try{
         const authToken = req.header("authToken");

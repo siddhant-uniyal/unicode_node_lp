@@ -104,7 +104,7 @@ const register = async(req, res)=>{
 };
 
 const getMyProfile = async(req, res)=>{
-  const user = await User.findOne({ _id: req.user });
+  const user = await User.findOne({ _id: req.user_id });
 
   if (user) {
     res.status(200).json({
@@ -121,7 +121,7 @@ const logout = async (req, res) => {
 };
 
 
-const follow = async (req , res) =>{
+const follow = async (req , res , next) =>{
 
 
     try{
@@ -155,7 +155,7 @@ const follow = async (req , res) =>{
 }
 
 
-const unfollow = async (req , res) =>{
+const unfollow = async (req , res , next) =>{
 
 
 
@@ -189,7 +189,7 @@ const unfollow = async (req , res) =>{
 })
 }
 
-const uploadpic = async (req, res) => {
+const uploadpic = async (req, res , next) => {
   try {
 
     const file = req.file;

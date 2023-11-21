@@ -8,7 +8,7 @@ const router = express.Router();
 
 
 router.post("/comment/:parentId" , isAuthenticated, newComment);
-router.get("/comment/mycomments"  , isAuthenticated, getComment);
+router.get("/comment/get"  , isAuthenticated, getComment);
 
 router.route("/comment/:commentId")
 .put( isAuthenticated, updateComment)

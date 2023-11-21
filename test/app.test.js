@@ -26,8 +26,8 @@ connectToDB();
 //     profilePictureCloudinary : "",
 // }
 
-var testUser1token = "";
-var testUser1ID = "" ;
+let testUser1token = "";
+let testUser1ID = "" ;
 
 // const testUser2 = {
 //     _id : new mongoose.Types.ObjectId(),
@@ -46,8 +46,8 @@ var testUser1ID = "" ;
 //     profilePictureCloudinary : "",
 // }
 
-var testUser2token = "";
-var testUser2ID = "";
+let testUser2token = "";
+let testUser2ID = "";
 
 const updateDB = async()=>{
 await User.deleteMany({});
@@ -89,6 +89,7 @@ test('register test for admin' , async() => {
     }).expect(200)
 
     testUser1ID = response.body.user._id
+    console.log(testUser1ID);
 })
 
 
@@ -101,6 +102,7 @@ test('login test for normal user' , async() => {
     }).expect(200)
 
     testUser2token = response.body.authToken;
+    console.log(testUser2token)
 })
 
 test('login test for admin' , async() => {
@@ -112,6 +114,7 @@ test('login test for admin' , async() => {
     }).expect(200)
 
     testUser1token = response.body.authToken;
+    console.log(testUser1token)
 })
 
 test('view profile test' , async()=>{
@@ -143,7 +146,7 @@ test('upload profile pic test' , async() => {
     .expect(200)
 })
 
-var testQuestion1ID = ""
+let testQuestion1ID = ""
 
 test('ask question test' , async() => {
     const response = await request(app)
@@ -155,6 +158,7 @@ test('ask question test' , async() => {
     }).expect(200)
 
     testQuestion1ID = response.body.postedQuestion._id
+    console.log(testQuestion1ID)
 })
 
 test('get question test' , async() => {
@@ -213,7 +217,7 @@ test('admin delete question test' , async() => {
     .expect(400)
 })
 
-var testAnswer1ID = "";
+let testAnswer1ID = "";
 
 test('give answer' , async() => {
     const response = await request(app)
@@ -223,8 +227,9 @@ test('give answer' , async() => {
         answer : "Test Answer 1"
     })
     .expect(200)
-
+    console.log(testQuestion1ID)
     testAnswer1ID = response.body.createdAnswer._id
+    console.log(testAnswer1ID)
 })
 
 test('get answers test' , async() => {
@@ -242,13 +247,18 @@ test('update answer test' , async() => {
         answer : "Test Answer 1 Updated"
     })
     .expect(200)
+
+    console.log(testAnswer1ID)
 })
+
 
 test('upvote answer test' , async() => {
     await request(app)
     .post(`/answer/upvote/${testAnswer1ID}`)
     .set("authToken" , testUser1token)
     .expect(200)
+
+    console.log(testAnswer1ID)
 })
 
 
@@ -257,6 +267,8 @@ test('downvote answer test' , async() => {
     .post(`/answer/downvote/${testAnswer1ID}`)
     .set("authToken" , testUser1token)
     .expect(200)
+
+    console.log(testAnswer1ID)
 })
 
 test('normal user delete answer test' , async() => {
@@ -264,6 +276,8 @@ test('normal user delete answer test' , async() => {
     .post(`/answer/${testAnswer1ID}`)
     .set("authToken" , testUser1token)
     .expect(400)
+
+    console.log(testAnswer1ID)
 })
 
 test('admin delete answer test' , async() => {
@@ -271,10 +285,12 @@ test('admin delete answer test' , async() => {
     .post(`/answer/${testAnswer1ID}`)
     .set("authToken" , testUser2token)
     .expect(400)
+
+    console.log(testAnswer1ID)
 })
 
-var testComment1ID = "";
-var testCommend2ID = "";
+let testComment1ID = "";
+let testComment2ID = "";
 
 test('post comment on question test' , async() => {
     const response = await request(app)
@@ -287,7 +303,9 @@ test('post comment on question test' , async() => {
     .expect(200)
 
     testComment1ID = response.body.createdComment._id
+    console.log(testComment1ID)
 })
+
 
 test('post comment on answer test' , async() => {
     const response = await request(app)
@@ -300,6 +318,7 @@ test('post comment on answer test' , async() => {
     .expect(200)
 
     testComment2ID = response.body.createdComment._id
+    console.log(testComment2ID)
 })
 
 test('get comments test' , async() => {
@@ -347,3 +366,5 @@ test('admin delete comment test' , async() => {
     .set("authToken" , testUser2token)
     .expect(400)
 })
+
+

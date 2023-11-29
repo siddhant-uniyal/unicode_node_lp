@@ -100,9 +100,9 @@ const deleteQuestion = async(req , res , next )=>{
         {
             $pull : { answers : questionToDelete._id}
         },
-        (err)=>{
-            if(err) return next(new ErrorHandler("User could not be updated successfully" , 400));
-        }
+        // (err)=>{
+        //     if(err) return next(new ErrorHandler("User could not be updated successfully" , 400));
+        // }
     )
     
 
@@ -147,8 +147,8 @@ const downvoteQuestion = async (req , res , next) => {
 
     try{
 
-        const question = Question.findById(req.params.questionId);
-
+        const question = await Question.findById(req.params.questionId);
+        console.log(question)
         const hasUpvoted = question.upvotes.includes(req.user.user_id);
        
         await Question.findByIdAndUpdate(
@@ -161,7 +161,7 @@ const downvoteQuestion = async (req , res , next) => {
     }
 
 
-    res.status(201).json({
+    res.status(200).json({
         success : true,
         message : "Question downvoted successfully",
         

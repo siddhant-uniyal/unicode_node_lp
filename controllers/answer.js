@@ -86,7 +86,7 @@ const updateAnswer = async (req , res , next)=>{
 
     if(!updatedAnswer) return next(new ErrorHandler("Invalid ID , answer does not exist" , 404));
 
-     res.status(201).send({
+     res.status(200).send({
         success : true,
         message : "Answer Updated Successfully",
         updatedAnswer
@@ -109,7 +109,7 @@ const deleteAnswer = async (req , res , next )=>{
 
 
     if(req.user.user_id != idOfUser && req.auth == false ){
-        return next(new ErrorHandler("Only admins can delete answers of other users" , 401));
+        return next(new ErrorHandler("Only admins can delete answers of other users" , 400));
     }
 
     await Answer.deleteOne({_id : req.params.answerId})
@@ -156,7 +156,7 @@ const upvoteAnswer = async(req , res , next)=>{
         await Answer.findByIdAndUpdate(
             req.params.answerId,
             {
-                $push : {upvotes : req.user_id}
+                $push : {upvotes : req.user.user_id}
             }
         )
     }
@@ -165,7 +165,7 @@ const upvoteAnswer = async(req , res , next)=>{
     }
 
 
-    res.status(201).json({
+    res.status(200).json({
         success : true,
         message : "Answer upvoted successfully",
         
@@ -178,7 +178,7 @@ const downvoteAnswer = async (req , res , next) => {
 
     try{
 
-        const answer = Answer.findById(req.params.answerId);
+        const answer = await Answer.findById(req.params.answerId);
 
         const hasUpvoted = answer.upvotes.includes(req.user_id);
        
@@ -192,7 +192,7 @@ const downvoteAnswer = async (req , res , next) => {
     }
 
 
-    res.status(201).json({
+    res.status(200).json({
         success : true,
         message : "Answer downvoted successfully",
         

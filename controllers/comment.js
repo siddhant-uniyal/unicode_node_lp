@@ -1,5 +1,7 @@
 const Comment =  require("../models/Comment.js");
 const Question = require("../models/Question.js");
+const Answer = require("../models/Answer.js");
+const User = require("../models/User.js");
 const ErrorHandler = require("../utils/errorHandler.js");
 
 
@@ -9,7 +11,7 @@ const newComment = async (req , res)=>{
     const {comment , parentType} = req.body;
     const parentId = req.params.parentId;
     const createdComment = new Comment({
-        user : req.user._id,
+        user : req.user.user_id,
         comment,
         parentId,
         parentType
@@ -31,10 +33,10 @@ const newComment = async (req , res)=>{
     )
     }
     else{
-        await Comment.findByIdAndUpdate(
+        await Answer.findByIdAndUpdate(
             parentId,
             {
-                 $push: { comment : createdComment._id }
+                 $push: { comments : createdComment._id }
             },
             // (err)=>{
             //     if(err) return res.status(400).send("Comment could not be updated properly")
@@ -48,14 +50,14 @@ const newComment = async (req , res)=>{
         {
             $push : { comments : createdComment._id}
         },
-        (err)=>{
-            if(err) return next(new ErrorHandler("User could not be updated successfully" , 400));
-        }
+        // (err)=>{
+        //     if(err) return next(new ErrorHandler("User could not be updated successfully" , 400));
+        // }
     )
 
     
 
-    res.status(201).json({
+    res.status(200).json({
         success : true,
         message : `Comment posted successfully , ${parentType} document updated successfully and User updated Successfully`,
         createdComment
@@ -110,7 +112,7 @@ const updateComment = async (req , res)=>{
     
 
 }
-const deleteComment = async (req , res )=>{
+const deleteComment = async (req , res , next )=>{
     try{
 
     const commentToDelete = await Comment.findById(req.params.commentId);
@@ -124,39 +126,39 @@ const deleteComment = async (req , res )=>{
     }
 
 
-    await commentToDelete.remove();
+    await Comment.deleteOne({ _id: req.params.commentId });
 
-
-    if(commentToDelete.parentType=="Question"){
+    const parentType = commentToDelete.parentType
+    if(parentType=="Question"){
     await Question.findByIdAndUpdate(
         commentToDelete.parentId,
         {
             $pull : { comments : commentToDelete._id}
         },
-        (err)=>{
-            if(err) return next(new ErrorHandler("Question could not be updated properly" , 400));
-        }
+        // (err)=>{
+        //     if(err) return next(new ErrorHandler("Question could not be updated properly" , 400));
+        // }
     )
     }
     else{
-        await Comment.findByIdAndUpdate(
+        await Answer.findByIdAndUpdate(
             commentToDelete.parentId,
             {
                 $pull : { comments : commentToDelete._id}
             },
-            (err)=>{
-                if(err) return next(new ErrorHandler("Comment could not be updated properly" , 400));
-            }
+            // (err)=>{
+            //     if(err) return next(new ErrorHandler("Comment could not be updated properly" , 400));
+            // }
         )
     }
     await User.findByIdAndUpdate(
-        req.user._id,
+        req.user.user_id,
         {
             $pull : { comments : commentToDelete._id}
         },
-        (err)=>{
-            if(err) return next(new ErrorHandler("User could not be updated properly" , 400));
-        }
+        // (err)=>{
+        //     if(err) return next(new ErrorHandler("User could not be updated properly" , 400));
+        // }
     )
 
     
@@ -164,7 +166,7 @@ const deleteComment = async (req , res )=>{
      res.status(201).send({
         success : true,
         message : `Comment Removed Successfully , ${parentType} Updated Successfully and User updated Successfully`,
-        deletedQuestion
+        commentToDelete
 } )
 
 }
@@ -200,7 +202,7 @@ const upvoteComment = async(req , res)=>{
 }
 
 
-const downvoteComment = async (req , res) => {
+const downvoteComment = async (req , res , next) => {
 
     try{
 

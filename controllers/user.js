@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const cloudinary = require("cloudinary").v2
 const getDataUri = require("../utils/dataUri.js");
+const ErrorHandler = require("../utils/errorHandler.js");
 
 
 const login = async(req, res)=>{
@@ -104,7 +105,7 @@ const register = async(req, res)=>{
 };
 
 const getMyProfile = async(req, res)=>{
-  const user = await User.findOne({ _id: req.user_id });
+  const user = await User.findOne({ _id: req.user.user_id });
 
   if (user) {
     res.status(200).json({
@@ -128,7 +129,7 @@ const follow = async (req , res , next) =>{
     await User.findByIdAndUpdate(
       req.params.userId,
       {
-        $push : {followers : req.user_id}
+        $push : {followers : req.user.user_id}
       }
     )
     }catch(err){
@@ -137,7 +138,7 @@ const follow = async (req , res , next) =>{
 
     try{
       await User.findByIdAndUpdate(
-        req_user,
+        req.user.user_id,
         {
           $push : {following : req.params.id}
         }
@@ -146,10 +147,9 @@ const follow = async (req , res , next) =>{
       return next(new ErrorHandler("Following could not be updated" , 400));
     }
 
-    res.status(201).json({
+    res.status(200).json({
       success : true,
       message : "User followed successfully and following updated successfully",
-      createdAnswer
 
   })
 }
@@ -163,7 +163,7 @@ const unfollow = async (req , res , next) =>{
   await User.findByIdAndUpdate(
     req.params.userId,
     {
-      $pull : {followers : req.user_id}
+      $pull : {followers : req.user.user_id}
     }
   )
   }catch(err){
@@ -172,7 +172,7 @@ const unfollow = async (req , res , next) =>{
 
   try{
     await User.findByIdAndUpdate(
-      req_user,
+      req.user.user_id,
       {
         $pull : {following : req.params.id}
       }
@@ -181,10 +181,9 @@ const unfollow = async (req , res , next) =>{
     return next(new ErrorHandler("Following could not be updated" , 400));
   }
 
-  res.status(201).json({
+  res.status(200).json({
     success : true,
     message : "User unfollowed successfully and following of user updated successfully",
-    createdAnswer
 
 })
 }

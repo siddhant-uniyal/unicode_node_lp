@@ -42,7 +42,7 @@ const newAnswer = async (req , res , next)=>{
       }
 
 
-    res.status(201).json({
+    res.status(200).json({
         success : true,
         message : "Answer posted successfully ,Question document updated successfully and User updated Successfully",
         createdAnswer

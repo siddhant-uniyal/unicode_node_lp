@@ -1,10 +1,9 @@
 
 const User = require("../models/User.js")
 const Question =  require("../models/Question.js");
+const ErrorHandler = require("../utils/errorHandler.js");
 
-
-
-const postQuestion = async (req , res) => {
+const postQuestion = async (req , res , next) => {
     try{
     const {question , category} = req.body;
 
@@ -56,7 +55,7 @@ catch(e){
 }
 
 } 
-const updateQuestion = async (req , res) => {
+const updateQuestion = async (req , res , next) => {
     
     try{
     const updatedQuestion = await Question.findOneAndUpdate(
@@ -66,7 +65,7 @@ const updateQuestion = async (req , res) => {
     );
 
     if(!updatedQuestion) return next(new ErrorHandler("Invalid ID , Question does not exist" , 400));
-     res.status(201).send({
+     res.status(200).send({
         success : true,
         message : "Question Updated Successfully",
         updatedQuestion
@@ -78,7 +77,7 @@ const updateQuestion = async (req , res) => {
     
 
 }
-const deleteQuestion = async(req , res )=>{
+const deleteQuestion = async(req , res , next )=>{
     try{
 
     const questionToDelete = await Question.findById(req.params.questionId);
@@ -119,13 +118,13 @@ catch(e){
 }
 }
 
-const upvoteQuestion = async (req , res) => {
+const upvoteQuestion = async (req , res , next) => {
 
     try{
         await Question.findByIdAndUpdate(
             req.params.questionId,
             {
-                $push : {upvotes : req.user_id}
+                $push : {upvotes : req.user.user_id}
             }
         )
     }
@@ -134,7 +133,7 @@ const upvoteQuestion = async (req , res) => {
     }
 
 
-    res.status(201).json({
+    res.status(200).json({
         success : true,
         message : "Question upvoted successfully",
         
@@ -144,17 +143,17 @@ const upvoteQuestion = async (req , res) => {
 
 
 
-const downvoteQuestion = async (req , res) => {
+const downvoteQuestion = async (req , res , next) => {
 
     try{
 
         const question = Question.findById(req.params.questionId);
 
-        const hasUpvoted = question.upvotes.includes(req.user_id);
+        const hasUpvoted = question.upvotes.includes(req.user.user_id);
        
         await Question.findByIdAndUpdate(
             req.params.questionId,
-            hasUpvoted ? { $pull: { upvotes: req.user_id }, $push: { downvotes: req.user_id } } : { $push: { downvotes: req.user_id} }
+            hasUpvoted ? { $pull: { upvotes: req.user.user_id }, $push: { downvotes: req.user.user_id } } : { $push: { downvotes: req.user.user_id} }
         )
     }
     catch(err){

@@ -6,6 +6,7 @@ const answerRouter =  require("./routes/answer.js");
 const commentRouter =  require("./routes/comment.js");
 const errorHandler = require("./middlewares/error.js");
 const {config} =  require("dotenv");
+const cors = require("cors");
 
 
 const app = express();
@@ -26,6 +27,7 @@ app.use(questionRouter)
 app.use(answerRouter)
 app.use(commentRouter)
 app.use(errorHandler)
+app.use(cors())
 
 module.exports.app = app;
 

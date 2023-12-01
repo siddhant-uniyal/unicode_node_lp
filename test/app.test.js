@@ -141,7 +141,7 @@ test('follow someone test' , async() => {
 
 test('unfollow someone test' , async() => {
     await request(app)
-    .post(`unfollow/${testUser2ID}`)
+    .post(`/unfollow/${testUser2ID}`)
     .set("authToken" , testUser1token)
     .expect(200)
 })
@@ -149,6 +149,7 @@ test('unfollow someone test' , async() => {
 test('upload profile pic test' , async() => {
     await request(app)
     .post("/uploadpic")
+    .set("authToken" , testUser1token)
     .attach('file',("D:/unicode_node_lp/test/testProfilePic.png"))
     .expect(200)
 })
@@ -212,16 +213,16 @@ test('downvote question test' , async() => {
 
 test('normal user delete question test' , async() => {
     await request(app)
-    .post(`/question/${testQuestion1ID}`)
+    .delete(`/question/${testQuestion1ID}`)
     .set("authToken" , testUser2token)
     .expect(400)
 })
 
 test('admin delete question test' , async() => {
     await request(app)
-    .post(`/question/${testQuestion1ID}`)
+    .delete(`/question/${testQuestion1ID}`)
     .set("authToken" , testUser1token)
-    .expect(200)
+    .expect(201)
 })
 
 let testAnswer1ID = "";
@@ -259,7 +260,6 @@ test('update answer test' , async() => {
     console.log(testAnswer1ID)
 })
 
-
 test('upvote answer test' , async() => {
     await request(app)
     .post(`/answer/upvote/${testAnswer1ID}`)
@@ -281,7 +281,7 @@ test('downvote answer test' , async() => {
 
 test('normal user delete answer test' , async() => {
     await request(app)
-    .post(`/answer/${testAnswer1ID}`)
+    .delete(`/answer/${testAnswer1ID}`)
     .set("authToken" , testUser2token)
     .expect(400)
 
@@ -290,9 +290,9 @@ test('normal user delete answer test' , async() => {
 
 test('admin delete answer test' , async() => {
     await request(app)
-    .post(`/answer/${testAnswer1ID}`)
+    .delete(`/answer/${testAnswer1ID}`)
     .set("authToken" , testUser1token)
-    .expect(200)
+    .expect(201)
 
     console.log(testAnswer1ID)
 })
@@ -359,21 +359,21 @@ test('downvote comment test' , async() => {
     await request(app)
     .post(`/comment/downvote/${testComment1ID}`)
     .set("authToken" , testUser1token)
-    .expect(200)
+    .expect(201)
 })
 
 test('normal user delete comment test' , async() => {
     await request(app)
-    .post(`/comment/${testComment1ID}`)
+    .delete(`/comment/${testComment1ID}`)
     .set("authToken" , testUser2token)
-    .expect(400)
+    .expect(401)
 })
 
 test('admin delete comment test' , async() => {
     await request(app)
-    .post(`/answer/${testComment1ID}`)
+    .delete(`/comment/${testComment1ID}`)
     .set("authToken" , testUser1token)
-    .expect(400)
+    .expect(201)
 })
 
 

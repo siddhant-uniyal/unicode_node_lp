@@ -206,7 +206,7 @@ const downvoteComment = async (req , res , next) => {
 
     try{
 
-        const comment = Comment.findById(req.params.answerId);
+        const comment = await Comment.findById(req.params.commentId);
 
         const hasUpvoted = comment.upvotes.includes(req.user_id);
        

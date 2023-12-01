@@ -92,8 +92,7 @@ const register = async(req, res)=>{
       success: true,
       message: "Successful registration and email sent",
       user,
-      authToken,
-      info
+      authToken
     });
   } catch (e) {
     res.status(400).json({ Error: e.message });

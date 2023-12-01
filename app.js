@@ -4,7 +4,7 @@ const userRouter = require("./routes/user.js");
 const questionRouter = require("./routes/question.js");
 const answerRouter =  require("./routes/answer.js");
 const commentRouter =  require("./routes/comment.js");
-const errorHandler = require("./middlewares/error.js");
+const errorHandler = require("./middlewares/Error.js");
 const {config} =  require("dotenv");
 const cors = require("cors");
 

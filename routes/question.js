@@ -1,5 +1,5 @@
 const express =  require("express")
-const  { postQuestion , getQuestion, updateQuestion, deleteQuestion, searchCategory , upvoteQuestion , downvoteQuestion} = require("../controllers/question.js");
+const  { postQuestion , getQuestion, updateQuestion, deleteQuestion, searchCategory , upvoteQuestion , downvoteQuestion, allQuest} = require("../controllers/question.js");
 const isAuthenticated  =  require("../middlewares/auth.js");
 const isAdmin = require("../middlewares/verifyLevel.js")
 const router = express.Router();
@@ -14,10 +14,10 @@ router.route("/question/:questionId")
 .put( isAuthenticated,updateQuestion)
 .delete( isAuthenticated, isAdmin , deleteQuestion)
 
-router.get("/question/search" , isAuthenticated , searchCategory);
+router.post("/question/search" , isAuthenticated , searchCategory);
 
 router.post("/question/upvote/:questionId" , isAuthenticated , upvoteQuestion);
 
 router.post("/question/downvote/:questionId" , isAuthenticated , downvoteQuestion);
-
+router.get('/question/all',allQuest)
 module.exports =  router;

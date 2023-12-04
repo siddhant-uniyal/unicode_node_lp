@@ -56,7 +56,7 @@ const register = async(req, res)=>{
         message: "User already exists",
       });
 
-    const hashedPassword =  await bcrypt.hash(password, process.env.SALT);
+    const hashedPassword =  await bcrypt.hash(password, 9);
 
     user = await User.create({ name, email, password: hashedPassword , auth});
 
@@ -92,8 +92,7 @@ const register = async(req, res)=>{
       success: true,
       message: "Successful registration and email sent",
       user,
-      authToken,
-      info
+      authToken
     });
   } catch (e) {
     res.status(400).json({ Error: e.message });
@@ -140,7 +139,7 @@ const follow = async (req , res , next) =>{
       await User.findByIdAndUpdate(
         req.user.user_id,
         {
-          $push : {following : req.params.id}
+          $push : {following : req.params.userId}
         }
       )
     }catch(err){
@@ -174,7 +173,7 @@ const unfollow = async (req , res , next) =>{
     await User.findByIdAndUpdate(
       req.user.user_id,
       {
-        $pull : {following : req.params.id}
+        $pull : {following : req.params.userId}
       }
     )
   }catch(err){
@@ -231,5 +230,13 @@ const uploadpic = async (req, res , next) => {
   }
 };
 
-
-module.exports = {login , register , unfollow , follow , getMyProfile , logout , uploadpic};
+const allUsers=async(req,res)=>{
+  try {
+    const users=await User.find()
+    res.status(200).json({users})
+  } catch (error) {
+    console.log(error.message)
+    res.status(400).json({message:error.message})
+  }
+}
+module.exports = {login , register , unfollow , follow , getMyProfile , logout , uploadpic,allUsers};

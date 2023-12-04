@@ -6,10 +6,10 @@ const ErrorHandler = require("../utils/errorHandler.js");
 const postQuestion = async (req , res , next) => {
     try{
     const {question , category} = req.body;
-
     const postedQuestion = new Question({
         question :question,
         categories : category,
+        user:req.user.user_id
     })
 
     await postedQuestion.save();
@@ -40,9 +40,7 @@ catch(e){
 const getQuestion = async (req , res )=>{
     
     try{
-
-    const questions = await Question.find({user : req.user._id});
-
+    const questions = await Question.find({user : req.user.user_id});
     res.status(200).json({
         success : true,
         questions,
@@ -201,5 +199,13 @@ const searchCategory = async (req , res) => {
 
 
 }
-
-module.exports = {getQuestion , postQuestion , deleteQuestion , upvoteQuestion , downvoteQuestion , updateQuestion , searchCategory}
+const allQuest=async(req,res)=>{
+    try {
+        const questions=await Question.find({})
+        res.status(200).json({questions})
+    } catch (error) {
+        console.log(error.message)
+        res.status(400).json({message:error.message})
+    }
+}
+module.exports = {getQuestion , postQuestion , deleteQuestion , upvoteQuestion , downvoteQuestion , updateQuestion , searchCategory,allQuest}

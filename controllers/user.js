@@ -139,7 +139,7 @@ const follow = async (req , res , next) =>{
       await User.findByIdAndUpdate(
         req.user.user_id,
         {
-          $push : {following : req.params.id}
+          $push : {following : req.params.userId}
         }
       )
     }catch(err){
@@ -173,7 +173,7 @@ const unfollow = async (req , res , next) =>{
     await User.findByIdAndUpdate(
       req.user.user_id,
       {
-        $pull : {following : req.params.id}
+        $pull : {following : req.params.userId}
       }
     )
   }catch(err){

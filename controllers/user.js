@@ -93,7 +93,6 @@ const register = async(req, res)=>{
       message: "Successful registration and email sent",
       user,
       authToken,
-      info
     });
   } catch (e) {
     res.status(400).json({ Error: e.message });

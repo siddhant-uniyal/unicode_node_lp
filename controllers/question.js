@@ -10,12 +10,11 @@ const postQuestion = async (req , res , next) => {
     const postedQuestion = new Question({
         question :question,
         categories : category,
+        user: req.user.user_id, 
     })
 
     await postedQuestion.save();
 
-
-    
     await User.findByIdAndUpdate(
         req.user.user_id,
         {

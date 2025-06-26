@@ -6,64 +6,30 @@ const Answer = require("../models/Answer.js")
 const Question = require("../models/Question.js")
 const Comment = require("../models/Comment.js")
 const { connectToDB } = require("../data/db.js")
-const { response } = require("express")
-
-connectToDB();
-// const testUser1 = {
-//     _id : new mongoose.Types.ObjectId(),
-
-//     name : 'testUser1Normal',
-//     email : 'testUser1@gmail.com',
-//     password : '12345678',
-//     followers : [],
-//     following : [],
-//     answers : [],
-//     questions : [],
-//     comments : [],
-//     views : [],
-//     auth : 'Normal',
-//     education : 'Graduate',
-//     profilePictureCloudinary : "",
-// }
 
 let testUser1token = "";
 let testUser1ID = "" ;
 
-// const testUser2 = {
-//     _id : new mongoose.Types.ObjectId(),
-
-//     name : 'testUser2Admin',
-//     email : 'testUser2@gmail.com',
-//     password : '12345678',
-//     followers : [],
-//     following : [],
-//     answers : [],
-//     questions : [],
-//     comments : [],
-//     views : [],
-//     auth : 'Admin',
-//     education : 'Graduate',
-//     profilePictureCloudinary : "",
-// }
-
-
 let testUser2token = "";
 let testUser2ID = "";
 
-const updateDB = async()=>{
+const updateDB = async ()=>{
 await User.deleteMany({});
 await Answer.deleteMany({});
 await Question.deleteMany({});
 await Comment.deleteMany({});
-// await User(testUser1).save();
-// await User(testUser2).save();
 }
 
-const timing = async()=>{
-    await updateDB()
-}
+beforeAll(async () => {
+    connectToDB();
+    await updateDB();
+}, 5000); 
 
-timing()
+afterAll(async () => {
+    await mongoose.connection.close();
+});
+
+jest.setTimeout(5000); 
 
 test('register test for normal user' , async() => {
     const response = await request(app)
@@ -95,7 +61,6 @@ test('register test for admin' , async() => {
    
 })
 
-
 test('login test for normal user' , async() => {
     const response = await request(app)
     .post("/login")
@@ -105,7 +70,6 @@ test('login test for normal user' , async() => {
     }).expect(200)
 
     testUser2token = response.body.authToken;
-
 
     console.log("Test User 2 Token" ,testUser2token);
     
@@ -150,7 +114,7 @@ test('upload profile pic test' , async() => {
     await request(app)
     .post("/uploadpic")
     .set("authToken" , testUser1token)
-    .attach('file',("D:/unicode_node_lp/test/testProfilePic.png"))
+    .attach('file',("/run/media/siddhantuniyal/DATA/PROGRAMMING/DEV_OR_ML/PROJECTS/unicode_node_lp/test/testProfilePic.png"))
     .expect(200)
 })
 

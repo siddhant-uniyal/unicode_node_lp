@@ -17,7 +17,7 @@ const postQuestion = async (req , res , next) => {
 
     
     await User.findByIdAndUpdate(
-        req.user._id,
+        req.user.user_id,
         {
             $push : { questions : postedQuestion._id}
         },

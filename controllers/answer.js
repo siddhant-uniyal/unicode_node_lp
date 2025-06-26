@@ -61,7 +61,7 @@ const getAnswer = async (req , res )=>{
     
     try{
 
-    const answers = await Answer.find({user : req.user._id});
+    const answers = await Answer.find({user : req.user.user_id});
 
     res.status(200).json({
         success : true,
@@ -125,7 +125,7 @@ const deleteAnswer = async (req , res , next )=>{
         // }
     )
     await User.findByIdAndUpdate(
-        req.user._id,
+        req.user.user_id,
         {
             $pull : { answers : answerToDelete._id}
         },

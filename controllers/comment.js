@@ -46,7 +46,7 @@ const newComment = async (req , res)=>{
 
 
     await User.findByIdAndUpdate(
-        req.user._id,
+        req.user.user_id,
         {
             $push : { comments : createdComment._id}
         },
@@ -75,7 +75,7 @@ const getComment = async (req , res )=>{
     
     try{
 
-    const comments = await Comment.find({user : req.user._id});
+    const comments = await Comment.find({user : req.user.user_id});
 
     res.status(200).json({
         success : true,

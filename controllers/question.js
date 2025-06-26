@@ -41,7 +41,7 @@ const getQuestion = async (req , res )=>{
     
     try{
 
-    const questions = await Question.find({user : req.user._id});
+    const questions = await Question.find({user : req.user.user_id});
 
     res.status(200).json({
         success : true,
@@ -96,7 +96,7 @@ const deleteQuestion = async(req , res , next )=>{
     
 
     await User.findByIdAndUpdate(
-        req.user._id,
+        req.user.user_id,
         {
             $pull : { answers : questionToDelete._id}
         },

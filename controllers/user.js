@@ -62,32 +62,6 @@ const register = async(req, res)=>{
 
     const authToken = jwt.sign({ user_id: user._id }, process.env.JWT_SECRET ); //expires in
 
-    // let transporter = nodemailer.createTransport({
-    //   service : "gmail",
-     
-    //   auth : {
-    //     user : process.env.EMAIL,
-    //     pass : process.env.PASSWORD
-    //   }
-    // })
-    
-    // const mailOptions = {
-    //   from : process.env.EMAIL,
-    //   to : req.body.email,
-    //   subject : "Successful Registration",
-    //   text : `Hi ${req.body.name}, you have successfully registered to our Quora Clone`
-    // }
-
-  //   const info = await transporter.sendMail(mailOptions, function(err, data) {
-  //     if(err) {
-  //         console.log(err.message);
-  //     } else {
-  //         // console.log(data);
-  //         console.log('Email sent successfully')
-  //     }
-  // });
-
-  // console.log(process.env.PASSWORD);
     res.json({
       success: true,
       message: "Successful registration",

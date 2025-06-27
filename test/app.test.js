@@ -114,7 +114,7 @@ test('upload profile pic test' , async() => {
     await request(app)
     .post("/uploadpic")
     .set("authToken" , testUser1token)
-    .attach('file',("/run/media/siddhantuniyal/DATA/PROGRAMMING/DEV_OR_ML/PROJECTS/unicode_node_lp/test/testProfilePic.png"))
+    .attach('file',("/run/media/siddhantuniyal/DATA/PROGRAMMING/DEV_OR_ML/PROJECTS/quora_backend_clone/test/testProfilePic.png"))
     .expect(200)
 })
 

@@ -4,7 +4,7 @@ const schema = new mongoose.Schema({
     user : { //id of the user who uploaded this question
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User', //i will refer to the User's in this field
-      }, //so when a new question is uploaded , this field will be PATCHed to hold the value of req.user._id
+      }, //so when a new question is uploaded , this field will be PATCHed to hold the value of req.user.user_id
   
     question : { //actual question asked
         type : String, 
